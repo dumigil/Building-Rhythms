@@ -1,0 +1,19 @@
+{
+    "logs": [
+        {
+            "outputFile": "/Users/michieldejong/AndroidStudioProjects/BuildingRhythms/app/build/intermediates/incremental/mergeDebugResources/merged.dir/values-fi-v29/values-fi-v29.xml",
+            "map": [
+                {
+                    "source": "/Users/michieldejong/.gradle/caches/transforms-2/files-2.1/9b303f1db0d2b43168f6be567fd8e607/arcgis-android-100.11.0/res/values-fi-v29/values-fi-v29.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "362",
+                        "endOffsets": "413"
+                    }
+                }
+            ]
+        }
+    ]
+}
