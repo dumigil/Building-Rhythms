@@ -6,8 +6,8 @@
 
 
 WiFiClient netSocket;               // network socket to server
-const char server[] = "services3.arcgis.com";  // server name
-String route = "/jR9a3QtlDyTstZiO/ArcGIS/rest/services/fingerprint_vals/FeatureServer/info?f=pjson";// API route
+const char server[] = "httpbin.org";  // server name
+String route = "/get";// API route
 char ssid[] = SECRET_SSID;  // your WPA2 enterprise network SSID (name)
 char user[] = SECRET_USER;  // your WPA2 enterprise username
 char pass[] = SECRET_PASS;  // your WPA2 enterprise password
@@ -26,7 +26,7 @@ void setup() {
   while ( WiFi.status() != WL_CONNECTED) {
     Serial.print("Attempting to connect to Network named: ");
     Serial.println(ssid);           // print the network name (SSID)
-    WiFi.beginEnterprise(ssid, user, pass);         // try to connect
+    WiFi.begin(ssid, pass);         // try to connect
     delay(2000);
   }
 
@@ -40,15 +40,13 @@ void setup() {
 }
 
 void loop() {
-  int statusCode = 0;
-  String contentType = "application/json";
-  JSONVar fingerprint = listNetworks();
-  String fingerprintString = (JSON.stringify(fingerprint));
-  features = String("features=[")+fingerprintString+String("]");
-  Serial.println(features);
   if (millis() - lastRequest > interval ) {
+    JSONVar fingerprint = listNetworks();
+    String fingerprintString = (JSON.stringify(fingerprint));
+    features = String("features=[")+fingerprintString+String("]");
+    Serial.println(features);
     Serial.println("making request");
-    HttpClient http(netSocket, server, 443);      // make an HTTP client
+    HttpClient http(netSocket, server, 80);      // make an HTTP client
     http.get(route);  // make a GET request
 
     while (http.connected()) {       // while connected to the server,
@@ -61,10 +59,10 @@ void loop() {
     http.stop();                     // close the request
     lastRequest = millis();
   }
-  
+}
     
   
-}
+
 JSONVar listNetworks() {
   JSONVar list;
   String macList;
