@@ -55,7 +55,7 @@ class MainActivity : AppCompatActivity() {
 
         // Note: it is not best practice to store API keys in source code.
         // The API key is referenced here for the convenience of this tutorial.
-        ArcGISRuntimeEnvironment.setApiKey("YOUR_API_KEY")
+        ArcGISRuntimeEnvironment.setApiKey("AAPKc0448a01c7d842c18fbdae5643d6ed65IgCmfZc9-fdYJPxtPca3UEp8Ft9V0zOulMBtumgxLfXxyG0wPadIluSBowA0JKCD")
 
         val scene = ArcGISScene(Basemap.createImagery())
 
