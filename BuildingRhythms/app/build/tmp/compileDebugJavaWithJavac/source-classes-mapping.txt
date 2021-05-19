@@ -1,4 +1,0 @@
-com/example/buildingrhythms/BuildConfig.java
- com.example.buildingrhythms.BuildConfig
-com/example/buildingrhythms/databinding/ActivityMainBinding.java
- com.example.buildingrhythms.databinding.ActivityMainBinding
