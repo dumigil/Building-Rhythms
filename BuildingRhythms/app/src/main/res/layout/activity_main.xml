@@ -2,14 +2,33 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/List"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
+    <ListView
+        android:id="@+id/wifilist"
+        android:layout_width="match_parent"
+        android:layout_height="312dp"
+        android:layout_weight="0.97" />
 
+
+    <Button
+        android:id="@+id/scan"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_gravity="bottom"
+        android:layout_margin="15dp"
+        android:background="@android:color/holo_green_light"
+        android:text="Scan Again" />
     <com.esri.arcgisruntime.mapping.view.SceneView
         android:id="@+id/sceneView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+    </com.esri.arcgisruntime.mapping.view.SceneView>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
