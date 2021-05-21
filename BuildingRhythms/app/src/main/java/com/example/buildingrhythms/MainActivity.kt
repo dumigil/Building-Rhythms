@@ -80,6 +80,7 @@ class MainActivity : AppCompatActivity() {
         val camera = Camera(cameraLocation, 355.0, 0.0, 0.0)
 
         sceneView.setViewpointCamera(camera)
+        WifiScanner()
 
 
     }

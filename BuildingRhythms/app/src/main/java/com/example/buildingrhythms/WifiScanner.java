@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.HashMap;
 import java.util.ArrayList;
 
-public class WifiScanner extends Activity implements View.OnClickListener{
+public class WifiScanner extends Activity implements Button.OnClickListener{
     WifiManager wifi;
     ListView lv;
     Button buttonScan;
