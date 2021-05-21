@@ -26,7 +26,7 @@ void setup() {
   while (!Serial);        // wait for serial monitor to open
   
   rtc.begin(); // initialize RTC
-  rtc.setEpoch(1451606400); // Jan 1, 2016
+  rtc.setEpoch(1621584422); // Jan 1, 2016
 
   // while you're not connected to a WiFi AP,
   while ( WiFi.status() != WL_CONNECTED) {
@@ -50,7 +50,7 @@ void loop() {
     listNetworks();
     Serial.println("making request");
     HttpClient http(netSocket, server, 80);      // make an HTTP client
-    http.post(route, data);  // make a GET request
+    //http.post(route, data);  // make a GET request
 
 
 
@@ -83,9 +83,9 @@ void listNetworks() {
 
   //construct timestamp
    String timeStamp = "";
-   timeStamp += rtc.getDay();
-   timeStamp += rtc.getMonth();
-   timeStamp += rtc.getYear();
+   timeStamp += print2digits(rtc.getDay());
+   timeStamp += print2digits(rtc.getMonth());
+   timeStamp += print2digits(rtc.getYear());
 
    timeStamp += print2digits(rtc.getHours());
    timeStamp += print2digits(rtc.getMinutes());
@@ -99,10 +99,11 @@ void listNetworks() {
   for (int thisNet = 0; thisNet < numSsid; thisNet++) {
     byte bssid[6];
     String address = printMacAddress(WiFi.BSSID(thisNet, bssid));
-    logElement["rssi"] = (WiFi.RSSI(thisNet));
-    logElement["mac"]=address;
-    logElement["unit"]=room;
-    logElement["timestamp"]=timeStamp;
+    logElement["RSSI"] = (WiFi.RSSI(thisNet));
+    logElement["MAC"]=address;
+    logElement["Room_ID"]=room;
+    logElement["Timestamp"]=timeStamp;
+    logElement["BSSID"]=WiFi.SSID(thisNet);
     features[thisNet]=JSON.stringify(logElement);
 
     Serial.println(features[thisNet]);
