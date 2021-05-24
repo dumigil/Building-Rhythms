@@ -6,6 +6,7 @@
     </shared>
   </component>
   <component name="AndroidLogFilters">
+    <option name="TOOL_WINDOW_LOG_LEVEL" value="warn" />
     <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="Show only selected application" />
   </component>
   <component name="AutoImportSettings">
@@ -30,10 +31,19 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3376a22a-4a1e-4f25-aade-860c86ca3d97" name="Default Changelist" comment="">
+    <list default="true" id="5b995298-d7b5-4b13-ae8a-efe0567944d2" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/buildingrhythms/MainActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/buildingrhythms/MainActivity.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/buildingrhythms/WifiScanner.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/buildingrhythms/WifiScanner.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/androidTest/java/com/example/buildingrhythms/ExampleInstrumentedTest.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/buildingrhythms/MainActivity.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/buildingrhythms/WifiScanner.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/test/java/com/example/buildingrhythms/ExampleUnitTest.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradle.properties" beforeDir="false" afterPath="$PROJECT_DIR$/gradle.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" afterPath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -46,17 +56,10 @@
       <ProjectState />
     </projectState>
   </component>
-  <component name="FileTemplateManagerImpl">
-    <option name="RECENT_TEMPLATES">
-      <list>
-        <option value="Class" />
-      </list>
-    </option>
-  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
-  <component name="ProjectId" id="1slHFn2KMch21bQE6k7miX2pYvO" />
+  <component name="ProjectId" id="1sziPsqo0y43oiQPmkpOpMsRXP9" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -64,15 +67,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
-    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="memory.settings.postsync.last.time.stamp" value="1621440158268" />
-    <property name="project.structure.last.edited" value="SDK Location" />
-    <property name="project.structure.proportion" value="0.17" />
-    <property name="project.structure.side.proportion" value="0.2" />
-    <property name="settings.editor.selected.configurable" value="AndroidSdkUpdater" />
-  </component>
-  <component name="PsdUISettings">
-    <option name="LAST_EDITED_BUILD_TYPE" value="release" />
+    <property name="memory.settings.postsync.last.time.stamp" value="1621881931457" />
   </component>
   <component name="RunManager">
     <configuration default="true" type="AndroidJUnit" factoryName="Android JUnit">
@@ -144,11 +139,11 @@
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="3376a22a-4a1e-4f25-aade-860c86ca3d97" name="Default Changelist" comment="" />
-      <created>1621440154717</created>
+      <changelist id="5b995298-d7b5-4b13-ae8a-efe0567944d2" name="Default Changelist" comment="" />
+      <created>1621881799704</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1621440154717</updated>
+      <updated>1621881799704</updated>
     </task>
     <servers />
   </component>
@@ -162,36 +157,23 @@
         </entry>
       </map>
     </option>
-    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="421" y="328" key="#PSD" timestamp="1621521856839">
+    <state width="1750" height="301" key="GridCell.Tab.0.bottom" timestamp="1621886070486">
       <screen x="0" y="25" width="1792" height="1095" />
     </state>
-    <state x="421" y="328" key="#PSD/-1920.-72.1920.1055/0.25.1792.1095@0.25.1792.1095" timestamp="1621521856839" />
-    <state width="1750" height="287" key="GridCell.Tab.0.bottom" timestamp="1621546558311">
+    <state width="1750" height="301" key="GridCell.Tab.0.bottom/-1920.-72.1920.1055/0.25.1792.1095@0.25.1792.1095" timestamp="1621886070486" />
+    <state width="1750" height="301" key="GridCell.Tab.0.center" timestamp="1621886070485">
       <screen x="0" y="25" width="1792" height="1095" />
     </state>
-    <state width="1750" height="287" key="GridCell.Tab.0.bottom/-1920.-72.1920.1055/0.25.1792.1095@0.25.1792.1095" timestamp="1621522995094" />
-    <state width="1750" height="287" key="GridCell.Tab.0.bottom/0.25.1792.1095@0.25.1792.1095" timestamp="1621546558311" />
-    <state width="1750" height="287" key="GridCell.Tab.0.center" timestamp="1621546558310">
+    <state width="1750" height="301" key="GridCell.Tab.0.center/-1920.-72.1920.1055/0.25.1792.1095@0.25.1792.1095" timestamp="1621886070485" />
+    <state width="1750" height="301" key="GridCell.Tab.0.left" timestamp="1621886070485">
       <screen x="0" y="25" width="1792" height="1095" />
     </state>
-    <state width="1750" height="287" key="GridCell.Tab.0.center/-1920.-72.1920.1055/0.25.1792.1095@0.25.1792.1095" timestamp="1621522995093" />
-    <state width="1750" height="287" key="GridCell.Tab.0.center/0.25.1792.1095@0.25.1792.1095" timestamp="1621546558310" />
-    <state width="1750" height="287" key="GridCell.Tab.0.left" timestamp="1621546558309">
+    <state width="1750" height="301" key="GridCell.Tab.0.left/-1920.-72.1920.1055/0.25.1792.1095@0.25.1792.1095" timestamp="1621886070485" />
+    <state width="1750" height="301" key="GridCell.Tab.0.right" timestamp="1621886070486">
       <screen x="0" y="25" width="1792" height="1095" />
     </state>
-    <state width="1750" height="287" key="GridCell.Tab.0.left/-1920.-72.1920.1055/0.25.1792.1095@0.25.1792.1095" timestamp="1621522995093" />
-    <state width="1750" height="287" key="GridCell.Tab.0.left/0.25.1792.1095@0.25.1792.1095" timestamp="1621546558309" />
-    <state width="1750" height="287" key="GridCell.Tab.0.right" timestamp="1621546558310">
-      <screen x="0" y="25" width="1792" height="1095" />
-    </state>
-    <state width="1750" height="287" key="GridCell.Tab.0.right/-1920.-72.1920.1055/0.25.1792.1095@0.25.1792.1095" timestamp="1621522995094" />
-    <state width="1750" height="287" key="GridCell.Tab.0.right/0.25.1792.1095@0.25.1792.1095" timestamp="1621546558310" />
-    <state x="405" y="228" key="SettingsEditor" timestamp="1621521926380">
-      <screen x="0" y="25" width="1792" height="1095" />
-    </state>
-    <state x="405" y="228" key="SettingsEditor/-1920.-72.1920.1055/0.25.1792.1095@0.25.1792.1095" timestamp="1621521926380" />
+    <state width="1750" height="301" key="GridCell.Tab.0.right/-1920.-72.1920.1055/0.25.1792.1095@0.25.1792.1095" timestamp="1621886070486" />
   </component>
 </project>
