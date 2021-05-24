@@ -9,6 +9,7 @@ import android.content.IntentFilter;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -35,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
     private SceneView mSceneView;
     WifiManager wifi;
     private ListView lv;
-    private FloatingActionButton buttonScan;
+    private Button buttonScan;
     private int size = 0;
     private List<ScanResult> results;
 
@@ -68,8 +69,8 @@ public class MainActivity extends AppCompatActivity {
         mSceneView.setViewpointCamera(camera);
 
 
-        buttonScan = (FloatingActionButton) findViewById(R.id.startScan);
-        buttonScan.setOnClickListener(new View.OnClickListener(){
+        buttonScan = (Button) findViewById(R.id.startScan);
+        buttonScan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view){
                 scanWifi();
@@ -98,10 +99,12 @@ public class MainActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             results = wifi.getScanResults();
             unregisterReceiver(this);
+            Log.d("RECEIVER", "We have a receiver");
 
             for (ScanResult scanResult : results) {
                 arrayList.add(scanResult.SSID + " - " + scanResult.capabilities);
                 adapter.notifyDataSetChanged();
+                Log.d("RESULT", "We have some scan results");
             }
         }
     };
