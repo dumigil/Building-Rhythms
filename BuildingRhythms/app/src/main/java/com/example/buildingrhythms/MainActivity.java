@@ -31,8 +31,15 @@ import com.esri.arcgisruntime.ArcGISRuntimeEnvironment;
 import com.esri.arcgisruntime.mapping.ArcGISTiledElevationSource;
 import com.esri.arcgisruntime.mapping.Basemap;
 import com.esri.arcgisruntime.mapping.view.Camera;
+import com.esri.arcgisruntime.mapping.view.LayerSceneProperties;
 import com.esri.arcgisruntime.mapping.view.SceneView;
+import com.esri.arcgisruntime.symbology.Renderer;
+import com.esri.arcgisruntime.symbology.SimpleFillSymbol;
+import com.esri.arcgisruntime.symbology.SimpleLineSymbol;
+import com.esri.arcgisruntime.symbology.SimpleRenderer;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import org.json.JSONArray;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,10 +49,12 @@ public class MainActivity extends AppCompatActivity {
     private SceneView mSceneView;
     WifiManager wifiManager;
     private ListView wifiList;
+    private JSONArray resultList;
     private Button buttonScan;
     private final int MY_PERMISSIONS_ACCESS_COARSE_LOCATION = 1;
     private List<ScanResult> results;
     WifiReceiver receiverWifi;
+    private boolean withExtrusion = true;
 
     private ArrayList<String> arrayList = new ArrayList<>();
     private ArrayAdapter adapter;
@@ -62,9 +71,34 @@ public class MainActivity extends AppCompatActivity {
         mSceneView = (SceneView) findViewById(R.id.sceneView);
         mSceneView.setScene(scene);
 
-        ServiceFeatureTable serviceFeatureTable = new ServiceFeatureTable("https://services3.arcgis.com/jR9a3QtlDyTstZiO/arcgis/rest/services/BK_MAP_WFL1/FeatureServer/4");
-        serviceFeatureTable.setFeatureRequestMode(ServiceFeatureTable.FeatureRequestMode.ON_INTERACTION_NO_CACHE);
-        FeatureLayer featureLayer = new FeatureLayer(serviceFeatureTable);
+        ServiceFeatureTable serviceFeatureTableUnits = new ServiceFeatureTable("https://services3.arcgis.com/jR9a3QtlDyTstZiO/arcgis/rest/services/BK_MAP_WFL1/FeatureServer/4");
+        serviceFeatureTableUnits.setFeatureRequestMode(ServiceFeatureTable.FeatureRequestMode.ON_INTERACTION_NO_CACHE);
+        FeatureLayer unitLayer = new FeatureLayer(serviceFeatureTableUnits);
+
+        unitLayer.getSceneProperties().setSurfacePlacement(LayerSceneProperties.SurfacePlacement.RELATIVE);
+        unitLayer.setRenderingMode(FeatureLayer.RenderingMode.DYNAMIC);
+        unitLayer.setMinScale(0);
+        unitLayer.setMaxScale(0);
+
+        scene.getOperationalLayers().add(unitLayer);
+
+
+        ServiceFeatureTable serviceFeatureTableBK = new ServiceFeatureTable("https://services3.arcgis.com/jR9a3QtlDyTstZiO/arcgis/rest/services/BK_MAP_WFL1/FeatureServer/3");
+        //serviceFeatureTableBK.setFeatureRequestMode(ServiceFeatureTable.FeatureRequestMode.ON_INTERACTION_NO_CACHE);
+        FeatureLayer featureLayer = new FeatureLayer(serviceFeatureTableBK);
+        ServiceFeatureTable serviceFeatureTableArduino = new ServiceFeatureTable("https://services3.arcgis.com/jR9a3QtlDyTstZiO/ArcGIS/rest/services/Arduino_Table/FeatureServer/0");
+
+        //serviceFeatureTableArduino.(ServiceFeatureTable.QueryFeatureFields.valueOf(""));
+        featureLayer.getSceneProperties().setSurfacePlacement(LayerSceneProperties.SurfacePlacement.RELATIVE);
+        featureLayer.setRenderingMode(FeatureLayer.RenderingMode.DYNAMIC);
+        featureLayer.setMinScale(0);
+        featureLayer.setMaxScale(0);
+
+        SimpleLineSymbol lineSymbol = new SimpleLineSymbol(SimpleLineSymbol.Style.SOLID, 0x80964B00, 1.5F);
+        SimpleRenderer renderer = new SimpleRenderer(new SimpleFillSymbol(SimpleFillSymbol.Style.SOLID, 0xFFFFEDCC, lineSymbol));
+
+        renderer.getSceneProperties().setExtrusionMode(Renderer.SceneProperties.ExtrusionMode.ABSOLUTE_HEIGHT);
+        featureLayer.setRenderer(renderer);
 
         scene.getOperationalLayers().add(featureLayer);
 
@@ -92,6 +126,7 @@ public class MainActivity extends AppCompatActivity {
                             MainActivity.this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, MY_PERMISSIONS_ACCESS_COARSE_LOCATION);
                 } else {
                     wifiManager.startScan();
+
                 }
             }
         });
@@ -106,9 +141,9 @@ public class MainActivity extends AppCompatActivity {
         getWifi();
     }
     private void getWifi() {
-        if (Build.VERSION.SDK_INT > = Build.VERSION_CODES.M) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             Toast.makeText(MainActivity.this, "version> = marshmallow", Toast.LENGTH_SHORT).show();
-            if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) ! = PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(MainActivity.this, "location turned off", Toast.LENGTH_SHORT).show();
                 ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, MY_PERMISSIONS_ACCESS_COARSE_LOCATION);
             } else {

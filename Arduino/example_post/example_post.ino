@@ -99,11 +99,12 @@ void listNetworks() {
   for (int thisNet = 0; thisNet < numSsid; thisNet++) {
     byte bssid[6];
     String address = printMacAddress(WiFi.BSSID(thisNet, bssid));
-    logElement["RSSI"] = (WiFi.RSSI(thisNet));
-    logElement["MAC"]=address;
-    logElement["Room_ID"]=room;
-    logElement["Timestamp"]=timeStamp;
-    logElement["BSSID"]=WiFi.SSID(thisNet);
+    logElement["attributes"]["RSSI"] = (WiFi.RSSI(thisNet));
+    logElement["attributes"]["MAC"]=address;
+    logElement["attributes"]["Room_ID"]=room;
+    logElement["attributes"]["Timestamp"]=timeStamp;
+    logElement["attributes"]["BSSID"]=WiFi.SSID(thisNet);
+    
     features[thisNet]=JSON.stringify(logElement);
 
     Serial.println(features[thisNet]);
