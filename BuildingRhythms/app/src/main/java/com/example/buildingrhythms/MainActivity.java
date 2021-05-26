@@ -22,7 +22,12 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.esri.arcgisruntime.concurrent.ListenableFuture;
+import com.esri.arcgisruntime.data.Feature;
+import com.esri.arcgisruntime.data.FeatureQueryResult;
+import com.esri.arcgisruntime.data.QueryParameters;
 import com.esri.arcgisruntime.data.ServiceFeatureTable;
+import com.esri.arcgisruntime.geometry.Envelope;
 import com.esri.arcgisruntime.layers.FeatureLayer;
 import com.esri.arcgisruntime.mapping.ArcGISScene;
 import com.esri.arcgisruntime.layers.ArcGISSceneLayer;
@@ -30,6 +35,7 @@ import com.esri.arcgisruntime.ArcGISRuntimeEnvironment;
 
 import com.esri.arcgisruntime.mapping.ArcGISTiledElevationSource;
 import com.esri.arcgisruntime.mapping.Basemap;
+import com.esri.arcgisruntime.mapping.TimeExtent;
 import com.esri.arcgisruntime.mapping.view.Camera;
 import com.esri.arcgisruntime.mapping.view.LayerSceneProperties;
 import com.esri.arcgisruntime.mapping.view.SceneView;
@@ -41,7 +47,12 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONArray;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -88,6 +99,10 @@ public class MainActivity extends AppCompatActivity {
         FeatureLayer featureLayer = new FeatureLayer(serviceFeatureTableBK);
         ServiceFeatureTable serviceFeatureTableArduino = new ServiceFeatureTable("https://services3.arcgis.com/jR9a3QtlDyTstZiO/ArcGIS/rest/services/Arduino_Table/FeatureServer/0");
 
+
+
+
+
         //serviceFeatureTableArduino.(ServiceFeatureTable.QueryFeatureFields.valueOf(""));
         featureLayer.getSceneProperties().setSurfacePlacement(LayerSceneProperties.SurfacePlacement.RELATIVE);
         featureLayer.setRenderingMode(FeatureLayer.RenderingMode.DYNAMIC);
@@ -101,12 +116,11 @@ public class MainActivity extends AppCompatActivity {
         featureLayer.setRenderer(renderer);
 
         scene.getOperationalLayers().add(featureLayer);
-
         ArcGISTiledElevationSource elevationSource = new ArcGISTiledElevationSource(
                 "http://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer");
         scene.getBaseSurface().getElevationSources().add(elevationSource);
 
-        Camera camera = new Camera(52.0060971, 4.3701068, 1000.0, 0.00, 0.00, 0.0);
+        Camera camera = new Camera(52.0063728, 4.3710473, 500.0, 0.00, 0.00, 0.0);
         mSceneView.setViewpointCamera(camera);
 
 
@@ -126,6 +140,7 @@ public class MainActivity extends AppCompatActivity {
                             MainActivity.this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, MY_PERMISSIONS_ACCESS_COARSE_LOCATION);
                 } else {
                     wifiManager.startScan();
+                    getData(serviceFeatureTableArduino);
 
                 }
             }
@@ -174,5 +189,55 @@ public class MainActivity extends AppCompatActivity {
             }
             break;
         }
+    }
+    private void getData(ServiceFeatureTable serviceFeatureTable){
+        QueryParameters queryParameters = new QueryParameters();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        Date fiveMinAgoTime = Calendar.getInstance().getTime();
+        Date nowTime = Calendar.getInstance().getTime();
+
+        Calendar now = toCalendar(nowTime);
+        Calendar fiveMinAgo = toCalendar(fiveMinAgoTime);
+        fiveMinAgo.add(Calendar.DATE, -20);
+        Date fiveMinDate = fiveMinAgo.getTime();
+
+        Log.d("NOW", dateFormat.format(nowTime));
+        Log.d("NOW-FIVE", dateFormat.format(fiveMinDate));
+
+        TimeExtent timeExtent = new TimeExtent(fiveMinAgo, now);
+        queryParameters.setTimeExtent(timeExtent);
+
+        final ListenableFuture<FeatureQueryResult> future = serviceFeatureTable.queryFeaturesAsync(queryParameters);
+        // add done loading listener to fire when the selection returns
+        future.addDoneListener(() -> {
+            try {
+                // call get on the future to get the result
+                FeatureQueryResult result = future.get();
+                // check there are some results
+                Iterator<Feature> resultIterator = result.iterator();
+                if (resultIterator.hasNext()) {
+                    // get the extent of the first feature in the result to zoom to
+                    Feature feature = resultIterator.next();
+                    Log.d("WIFI_TABLE", feature.getAttributes().toString());
+
+                } else {
+                    Toast.makeText(this, "No WiFi data available for localisation ", Toast.LENGTH_LONG).show();
+                }
+            } catch (Exception e) {
+                String error = "Feature search failed for: " + queryParameters + ". Error: " + e.getMessage();
+                Toast.makeText(this, error, Toast.LENGTH_LONG).show();
+                Log.e("ERROR", error);
+            }
+        });
+
+    }
+
+
+
+    public static Calendar toCalendar(Date date){
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        return cal;
     }
 }
