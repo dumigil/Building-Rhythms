@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
         mSceneView = (SceneView) findViewById(R.id.sceneView);
         mSceneView.setScene(scene);
 
-        ServiceFeatureTable serviceFeatureTableUnits = new ServiceFeatureTable("https://services3.arcgis.com/jR9a3QtlDyTstZiO/arcgis/rest/services/BK_MAP_WFL1/FeatureServer/4");
+        ServiceFeatureTable serviceFeatureTableUnits = new ServiceFeatureTable("https://services3.arcgis.com/jR9a3QtlDyTstZiO/ArcGIS/rest/services/BK_Indoor_model_WFL1/FeatureServer/3");
         serviceFeatureTableUnits.setFeatureRequestMode(ServiceFeatureTable.FeatureRequestMode.ON_INTERACTION_NO_CACHE);
         FeatureLayer unitLayer = new FeatureLayer(serviceFeatureTableUnits);
 
@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
         scene.getOperationalLayers().add(unitLayer);
 
 
-        ServiceFeatureTable serviceFeatureTableBK = new ServiceFeatureTable("https://services3.arcgis.com/jR9a3QtlDyTstZiO/arcgis/rest/services/BK_MAP_WFL1/FeatureServer/3");
+        ServiceFeatureTable serviceFeatureTableBK = new ServiceFeatureTable("https://services3.arcgis.com/jR9a3QtlDyTstZiO/ArcGIS/rest/services/BK_Indoor_model_WFL1/FeatureServer/2");
         //serviceFeatureTableBK.setFeatureRequestMode(ServiceFeatureTable.FeatureRequestMode.ON_INTERACTION_NO_CACHE);
         FeatureLayer featureLayer = new FeatureLayer(serviceFeatureTableBK);
         ServiceFeatureTable serviceFeatureTableArduino = new ServiceFeatureTable("https://services3.arcgis.com/jR9a3QtlDyTstZiO/ArcGIS/rest/services/Arduino_Table/FeatureServer/0");
@@ -113,6 +113,7 @@ public class MainActivity extends AppCompatActivity {
         SimpleRenderer renderer = new SimpleRenderer(new SimpleFillSymbol(SimpleFillSymbol.Style.SOLID, 0xFFFFEDCC, lineSymbol));
 
         renderer.getSceneProperties().setExtrusionMode(Renderer.SceneProperties.ExtrusionMode.ABSOLUTE_HEIGHT);
+
         featureLayer.setRenderer(renderer);
 
         scene.getOperationalLayers().add(featureLayer);
@@ -120,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
                 "http://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer");
         scene.getBaseSurface().getElevationSources().add(elevationSource);
 
-        Camera camera = new Camera(52.0063728, 4.3710473, 500.0, 0.00, 0.00, 0.0);
+        Camera camera = new Camera(52.0063728, 4.3710473, 300.0, 0.00, 0.00, 0.0);
         mSceneView.setViewpointCamera(camera);
 
 
