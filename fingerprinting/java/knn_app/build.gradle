@@ -1,0 +1,37 @@
+plugins {
+    id "application"
+}
+apply plugin: 'java'
+// apply plugin: 'eclipse'
+apply plugin: 'application'
+
+//mainClassName = 'App'
+ext {
+    javaMainClass = "knn.App"
+}
+application {
+    mainClassName = javaMainClass
+}
+// tag::repositories[]
+repositories { 
+    mavenCentral() 
+}
+// end::repositories[]
+
+// tag::jar[]
+jar {
+    archiveBaseName = 'knn_app'
+    archiveVersion =  '0.1.0'
+}
+// end::jar[]
+
+// tag::dependencies[]
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+dependencies {
+    implementation "joda-time:joda-time:2.2"
+    implementation 'com.google.code.gson:gson:2.8.5'
+    testImplementation "junit:junit:4.12"
+}
+// end::dependencies[]
