@@ -39,8 +39,6 @@ public class App {
         request.connect();
         System.out.println(request);
 
-        System.out.println("The current local time is: " + currentTime);
-
         // Convert to a JSON object to malakas class object print data
         JsonParser jp = new JsonParser(); //from gson
         JsonElement root = jp.parse(new InputStreamReader((InputStream) request.getContent())); //Convert the input stream to a json element

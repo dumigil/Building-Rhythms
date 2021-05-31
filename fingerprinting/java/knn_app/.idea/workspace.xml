@@ -5,10 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e498766e-d425-477a-b0d9-99b23a7b3b2c" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../../../BuildingRhythms/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../../BuildingRhythms/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../BuildingRhythms/app/src/main/java/com/example/buildingrhythms/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../../BuildingRhythms/app/src/main/java/com/example/buildingrhythms/MainActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../_data/training_data/knn_model.pkl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../matching_algo.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/../../matching_algo.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/tmp/compileJava/source-classes-mapping.txt" beforeDir="false" afterPath="$PROJECT_DIR$/build/tmp/compileJava/source-classes-mapping.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/knn/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/knn/App.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -99,5 +98,16 @@
       <updated>1622452466422</updated>
     </task>
     <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
 </project>
