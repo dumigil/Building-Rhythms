@@ -3,25 +3,36 @@
 #include <RTCZero.h>
 #include <ArduinoJson.h>
 #include "arduino_secrets_thuis.h"
+//#include "arduino_secrets.h"
 
 WiFiSSLClient netSocket;               // network socket to server
-const char server[] = "services3.arcgis.com";  // server name
-String route = "/jR9a3QtlDyTstZiO/ArcGIS/rest/services/Arduino_Table/FeatureServer/0/addFeatures";              // API route
-String getRoute = "/jR9a3QtlDyTstZiO/ArcGIS/rest/services/Arduino_Table/FeatureServer/info/itemInfo?f=pjson";              // API route
+const char server[] PROGMEM = "services3.arcgis.com";  // server name
+const char route[] PROGMEM= "/jR9a3QtlDyTstZiO/ArcGIS/rest/services/Arduino_Table/FeatureServer/0/addFeatures";              // API route
 
+RTCZero rtc;
+const byte seconds = 0;
+const byte minutes = 31;
+const byte hours = 13;
+
+/* Change these values to set the current initial date */
+const byte day = 1;
+const byte month = 6;
+const byte year = 21;
 
 // request timestamp in ms:
 long lastRequest = 0;
-long lastScanMillis = 0;
 // interval between requests:
 int interval = 10000;
-HttpClient http(netSocket, server, 443);
+int status = WL_IDLE_STATUS;     // the WiFi radio's status
+HttpClient http(netSocket, server, 443); 
 
 
 void setup() {
   Serial.begin(9600);               // initialize serial communication
-  while (!Serial);        // wait for serial monitor to open
-
+  //while (!Serial);        // wait for serial monitor to open
+  rtc.begin();
+  rtc.setTime(hours, minutes, seconds);
+  rtc.setDate(day, month, year);
   // while you're not connected to a WiFi AP,
   while ( WiFi.status() != WL_CONNECTED) {
     Serial.print("Attempting to connect to Network named: ");
@@ -31,16 +42,18 @@ void setup() {
     WiFi.begin(SECRET_SSID, SECRET_PASS);
     // at uni
     //WiFi.beginEnterprise(SECRET_SSID,SECRET_USER,SECRET_PASS);         // try to connect
-    delay(2000);
+    delay(1000);
   }
 
   // When you're connected, print out the device's network status:
   IPAddress ip = WiFi.localIP();
-  Serial.print("IP Address: ");
-  Serial.println(ip);
+  //Serial.print("IP Address: ");
+  //Serial.println(ip);
 }
 void loop() {
+  WiFi.end();
   String dummyData = listNetworks();
+  Serial.println("Wifi scan complete, starting eduroam timeout");
   WiFi.end();
   delay(1000);
   while ( WiFi.status() != WL_CONNECTED) {
@@ -51,13 +64,11 @@ void loop() {
     WiFi.begin(SECRET_SSID, SECRET_PASS);
     // at uni
     //WiFi.beginEnterprise(SECRET_SSID,SECRET_USER,SECRET_PASS);         // try to connect
-    delay(2000);
+    delay(1000);
   }
-
   
   if (millis() - lastRequest > interval ) {
     Serial.println("making request");
-    //HttpClient http(netSocket, server, 443); 
     //http.get(getRoute);  // make a GET request
     String contentType = "application/x-www-form-urlencoded";
     http.post(route, contentType, dummyData);
@@ -71,16 +82,15 @@ void loop() {
     //  // when there's nothing left to the response,
     http.stop();                     // close the request
     lastRequest = millis();
-    
 
   }
-  
+  //Serial.println(freeMemory());
   
 }
 
 String listNetworks() {
   String dataString = "";
-  String room= "Michiels_Room";
+  const char room []PROGMEM= "Oost_Serre";
   int numSsid = WiFi.scanNetworks();
   if (numSsid == -1)
   {
@@ -92,19 +102,28 @@ String listNetworks() {
   dataString += "features=[";
   // print the network number and name for each network found:
   for (int thisNet = 0; thisNet < numSsid; thisNet++) {
-    DynamicJsonDocument doc(2048);
-    byte bssid[6];
-    String address = printMacAddress(WiFi.BSSID(thisNet, bssid));
-    String measurement = "";
-    dataString += comma;
-    doc["attributes"]["RSSI"] = String(WiFi.RSSI(thisNet));
-    doc["attributes"]["MAC"] = String(address);
-    doc["attributes"]["Room_ID"] = room;
-    doc["attributes"]["Time_Stamp"] = String(WiFi.getTime());
-    doc["attributes"]["BSSID"] = String(WiFi.SSID(thisNet));
-    serializeJson(doc, measurement);
-    dataString+=measurement;
-    comma = ",";
+    if(String(WiFi.SSID(thisNet)) == "eduroam" || 
+    String(WiFi.SSID(thisNet)) == "tudelft-dastud" || 
+    String(WiFi.SSID(thisNet)) == "Delft Free Wifi" ||
+    String(WiFi.SSID(thisNet)) == "TUvisitor"){
+      DynamicJsonDocument doc(2048);
+      byte bssid[6];
+      String address = printMacAddress(WiFi.BSSID(thisNet, bssid));
+      String measurement = "";
+      dataString += comma;
+      doc["attributes"]["RSSI"] = WiFi.RSSI(thisNet);
+      doc["attributes"]["MAC"] = String(address);
+      doc["attributes"]["Room_ID"] = room;
+      doc["attributes"]["Time_Stamp"] = String(rtc.getEpoch());
+      doc["attributes"]["BSSID"] = String(WiFi.SSID(thisNet));
+      serializeJson(doc, measurement);
+      dataString+=measurement;
+      comma = ",";
+    }
+    else{
+      continue;
+    }
+    
   }
   dataString += "]";
   
@@ -131,4 +150,22 @@ String printMacAddress(byte mac[]) {
     }
   }
   return address;
+}
+
+#ifdef __arm__
+// should use uinstd.h to define sbrk but Due causes a conflict
+extern "C" char* sbrk(int incr);
+#else  // __ARM__
+extern char *__brkval;
+#endif  // __arm__
+
+int freeMemory() {
+  char top;
+#ifdef __arm__
+  return &top - reinterpret_cast<char*>(sbrk(0));
+#elif defined(CORE_TEENSY) || (ARDUINO > 103 && ARDUINO != 151)
+  return &top - __brkval;
+#else  // __arm__
+  return __brkval ? &top - __brkval : &top - __malloc_heap_start;
+#endif  // __arm__
 }
