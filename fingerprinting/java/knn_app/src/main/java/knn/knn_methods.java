@@ -1,5 +1,26 @@
 package knn;
 public class knn_methods {
+    public String MAC;
+    public double RSSI;
+    public double uniqueId;
+    public String label;
+    // constructor for those with label
+    knn_methods(String mac, double signal, double unqID, String lbl)
+    {
+        this.MAC = mac;
+        this.RSSI = signal;
+        this.uniqueId = unqID;
+        this.label = lbl;
+    }
+    //constructor without label
+    knn_methods(String mac, double signal, double unqID)
+    {
+        this.MAC = mac;
+        this.RSSI = signal;
+        this.uniqueId = unqID;
+
+    }
+
     public double getManhattanDistance(final double[] features1, final double[] features2)
     {
         double sum = 0;
@@ -9,16 +30,7 @@ public class knn_methods {
         return sum;
     }
 
-    public double getEuclideanDistance( double[] features1,  double[] features2) 
-    {
-        double sum = 0;
-        for (int i = 0; i < features1.length; i++)
-        {  //System.out.println(features1[i]+" "+features2[i]);
-            //applied Euclidean distance formula
-            sum += Math.pow(features1[i] - features2[i], 2);
-        }
-        return Math.sqrt(sum);
-    }
+
 
     public void printer()
     {
