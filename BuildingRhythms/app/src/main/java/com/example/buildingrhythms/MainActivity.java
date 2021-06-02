@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ArcGISRuntimeEnvironment.setApiKey("AAPKc0448a01c7d842c18fbdae5643d6ed65IgCmfZc9-fdYJPxtPca3UEp8Ft9V0zOulMBtumgxLfXxyG0wPadIluSBowA0JKCD");
+        ArcGISRuntimeEnvironment.setApiKey(keys.api_key_02062021);
 
         ArcGISScene scene = new ArcGISScene();
         scene.setBasemap(Basemap.createOpenStreetMap());
@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
         mSceneView = (SceneView) findViewById(R.id.sceneView);
         mSceneView.setScene(scene);
 
-        ServiceFeatureTable serviceFeatureTableUnits = new ServiceFeatureTable("https://services3.arcgis.com/jR9a3QtlDyTstZiO/ArcGIS/rest/services/BK_MAP_WFL1/FeatureServer/4");
+        ServiceFeatureTable serviceFeatureTableUnits = new ServiceFeatureTable("https://services3.arcgis.com/jR9a3QtlDyTstZiO/arcgis/rest/services/BK_MAP_INDOOR_WFL1/FeatureServer/4");
         serviceFeatureTableUnits.setFeatureRequestMode(ServiceFeatureTable.FeatureRequestMode.ON_INTERACTION_NO_CACHE);
         FeatureLayer unitLayer = new FeatureLayer(serviceFeatureTableUnits);
 
@@ -93,8 +93,8 @@ public class MainActivity extends AppCompatActivity {
 
         scene.getOperationalLayers().add(unitLayer);
 
-        ServiceFeatureTable serviceFeatureTableBK = new ServiceFeatureTable("https://services3.arcgis.com/jR9a3QtlDyTstZiO/ArcGIS/rest/services/BK_MAP_WFL1/FeatureServer/4");
-        //serviceFeatureTableBK.setFeatureRequestMode(ServiceFeatureTable.FeatureRequestMode.ON_INTERACTION_NO_CACHE);
+        ServiceFeatureTable serviceFeatureTableBK = new ServiceFeatureTable("https://services3.arcgis.com/jR9a3QtlDyTstZiO/arcgis/rest/services/BK_MAP_INDOOR_WFL1/FeatureServer/3");
+        serviceFeatureTableBK.setFeatureRequestMode(ServiceFeatureTable.FeatureRequestMode.ON_INTERACTION_NO_CACHE);
         FeatureLayer featureLayer = new FeatureLayer(serviceFeatureTableBK);
         ServiceFeatureTable serviceFeatureTableArduino = new ServiceFeatureTable("https://services3.arcgis.com/jR9a3QtlDyTstZiO/ArcGIS/rest/services/Arduino_Table/FeatureServer/0");
 
@@ -136,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
                             MainActivity.this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, MY_PERMISSIONS_ACCESS_COARSE_LOCATION);
                 } else {
                     wifiManager.startScan();
-                    getData(serviceFeatureTableArduino);
+                    //getData(serviceFeatureTableArduino);
 
                 }
             }
