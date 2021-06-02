@@ -33,14 +33,18 @@
   <component name="ChangeListManager">
     <list default="true" id="5b995298-d7b5-4b13-ae8a-efe0567944d2" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/buildingrhythms/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/buildingrhythms/MainActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fingerprinting/java/knn_app/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../fingerprinting/java/knn_app/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fingerprinting/java/knn_app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/../fingerprinting/java/knn_app/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fingerprinting/java/knn_app/build/classes/java/main/knn/App.class" beforeDir="false" afterPath="$PROJECT_DIR$/../fingerprinting/java/knn_app/build/classes/java/main/knn/App.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fingerprinting/java/knn_app/build/tmp/compileJava/source-classes-mapping.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../fingerprinting/java/knn_app/build/tmp/compileJava/source-classes-mapping.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fingerprinting/java/knn_app/src/main/java/knn/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/../fingerprinting/java/knn_app/src/main/java/knn/App.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[VirtualDevicePath@/Users/michieldejong/.android/avd/Pixel_3a_API_28.avd]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[VirtualDevicePath@C:\Users\Pratyush\.android\avd\Pixel_XL_API_28.avd]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -64,7 +68,12 @@
   </component>
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="memory.settings.postsync.last.time.stamp" value="1621881931457" />
+    <property name="project.structure.last.edited" value="Suggestions" />
+    <property name="project.structure.proportion" value="0.17" />
+    <property name="project.structure.side.proportion" value="0.2" />
+    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
   </component>
   <component name="RunManager">
     <configuration default="true" type="AndroidJUnit" factoryName="Android JUnit">
@@ -157,6 +166,14 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="WindowStateProjectService">
+    <state x="-2433" y="286" key="#PSD" timestamp="1622498736295">
+      <screen x="-3200" y="0" width="2498" height="1080" />
+    </state>
+    <state x="-2433" y="286" key="#PSD/62.0.1474.864/-3200.0.2498.1080@-3200.0.2498.1080" timestamp="1622498736295" />
+    <state x="-2495" y="195" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1622498944517">
+      <screen x="-3200" y="0" width="2498" height="1080" />
+    </state>
+    <state x="-2495" y="195" key="#com.intellij.execution.impl.EditConfigurationsDialog/62.0.1474.864/-3200.0.2498.1080@-3200.0.2498.1080" timestamp="1622498944517" />
     <state x="100" y="125" width="1592" height="895" key="AVDManager" timestamp="1621887809671">
       <screen x="0" y="25" width="1792" height="1095" />
     </state>
@@ -197,5 +214,9 @@
       <screen x="0" y="25" width="1792" height="1095" />
     </state>
     <state width="1750" height="301" key="GridCell.Tab.1.right/-1920.-72.1920.1055/0.25.1792.1095@0.25.1792.1095" timestamp="1621889746971" />
+    <state x="-2441" y="185" key="SettingsEditor" timestamp="1622499494022">
+      <screen x="-3200" y="0" width="2498" height="1080" />
+    </state>
+    <state x="-2441" y="185" key="SettingsEditor/62.0.1474.864/-3200.0.2498.1080@-3200.0.2498.1080" timestamp="1622499494022" />
   </component>
 </project>
