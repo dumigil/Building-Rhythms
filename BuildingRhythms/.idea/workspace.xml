@@ -34,6 +34,7 @@
     <list default="true" id="5b995298-d7b5-4b13-ae8a-efe0567944d2" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/buildingrhythms/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/buildingrhythms/MainActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/buildingrhythms/WifiReceiver.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/buildingrhythms/WifiReceiver.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -64,7 +65,9 @@
   </component>
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="memory.settings.postsync.last.time.stamp" value="1621881931457" />
+    <property name="settings.editor.selected.configurable" value="device.file.explorer" />
   </component>
   <component name="RunManager">
     <configuration default="true" type="AndroidJUnit" factoryName="Android JUnit">
@@ -157,10 +160,11 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="100" y="125" width="1592" height="895" key="AVDManager" timestamp="1621887809671">
+    <state x="100" y="125" width="1592" height="895" key="AVDManager" timestamp="1622637069366">
       <screen x="0" y="25" width="1792" height="1095" />
     </state>
     <state x="100" y="125" width="1592" height="895" key="AVDManager/-1920.-72.1920.1055/0.25.1792.1095@0.25.1792.1095" timestamp="1621887809671" />
+    <state x="100" y="125" width="1592" height="895" key="AVDManager/0.25.1792.1095@0.25.1792.1095" timestamp="1622637069366" />
     <state width="1750" height="262" key="GridCell.Tab.0.bottom" timestamp="1622227146688">
       <screen x="0" y="25" width="1792" height="1095" />
     </state>
@@ -197,5 +201,13 @@
       <screen x="0" y="25" width="1792" height="1095" />
     </state>
     <state width="1750" height="301" key="GridCell.Tab.1.right/-1920.-72.1920.1055/0.25.1792.1095@0.25.1792.1095" timestamp="1621889746971" />
+    <state x="405" y="208" key="SettingsEditor" timestamp="1622636699506">
+      <screen x="0" y="25" width="1792" height="1095" />
+    </state>
+    <state x="405" y="208" key="SettingsEditor/0.25.1792.1095@0.25.1792.1095" timestamp="1622636699506" />
+    <state x="606" y="385" key="com.android.tools.idea.run.deployment.SelectMultipleDevicesDialog" timestamp="1622636738801">
+      <screen x="0" y="25" width="1792" height="1095" />
+    </state>
+    <state x="606" y="385" key="com.android.tools.idea.run.deployment.SelectMultipleDevicesDialog/0.25.1792.1095@0.25.1792.1095" timestamp="1622636738801" />
   </component>
 </project>

@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
         mSceneView = (SceneView) findViewById(R.id.sceneView);
         mSceneView.setScene(scene);
 
-        ServiceFeatureTable serviceFeatureTableUnits = new ServiceFeatureTable("https://services3.arcgis.com/jR9a3QtlDyTstZiO/ArcGIS/rest/services/BK_Indoor_model_WFL1/FeatureServer/3");
+        ServiceFeatureTable serviceFeatureTableUnits = new ServiceFeatureTable("https://services3.arcgis.com/jR9a3QtlDyTstZiO/ArcGIS/rest/services/BK_MAP_WFL1/FeatureServer/4");
         serviceFeatureTableUnits.setFeatureRequestMode(ServiceFeatureTable.FeatureRequestMode.ON_INTERACTION_NO_CACHE);
         FeatureLayer unitLayer = new FeatureLayer(serviceFeatureTableUnits);
 
@@ -93,15 +93,10 @@ public class MainActivity extends AppCompatActivity {
 
         scene.getOperationalLayers().add(unitLayer);
 
-
-        ServiceFeatureTable serviceFeatureTableBK = new ServiceFeatureTable("https://services3.arcgis.com/jR9a3QtlDyTstZiO/ArcGIS/rest/services/BK_Indoor_model_WFL1/FeatureServer/2");
+        ServiceFeatureTable serviceFeatureTableBK = new ServiceFeatureTable("https://services3.arcgis.com/jR9a3QtlDyTstZiO/ArcGIS/rest/services/BK_MAP_WFL1/FeatureServer/4");
         //serviceFeatureTableBK.setFeatureRequestMode(ServiceFeatureTable.FeatureRequestMode.ON_INTERACTION_NO_CACHE);
         FeatureLayer featureLayer = new FeatureLayer(serviceFeatureTableBK);
         ServiceFeatureTable serviceFeatureTableArduino = new ServiceFeatureTable("https://services3.arcgis.com/jR9a3QtlDyTstZiO/ArcGIS/rest/services/Arduino_Table/FeatureServer/0");
-
-
-
-
 
         //serviceFeatureTableArduino.(ServiceFeatureTable.QueryFeatureFields.valueOf(""));
         featureLayer.getSceneProperties().setSurfacePlacement(LayerSceneProperties.SurfacePlacement.RELATIVE);
@@ -231,10 +226,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.e("ERROR", error);
             }
         });
-
     }
-
-
 
     public static Calendar toCalendar(Date date){
         Calendar cal = Calendar.getInstance();
