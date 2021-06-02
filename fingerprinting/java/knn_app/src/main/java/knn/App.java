@@ -6,6 +6,7 @@ import java.net.URL;
 import java.net.URLConnection;
 
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 import com.google.gson.*;
 import knn.malakas;
@@ -50,22 +51,41 @@ public class App {
             // CREATE A list for storing knn object methods
 
 
-            String wifiName = "eduroam";
+            String wifiName1 = "eduroam";
+            String wifiName2 = "TUvisitor";
+            String wifiName3 = "Delft Free Wifi";
+            String wifiName4 = "tudelft-dastud";
+
+            double currentTime = Double.parseDouble( String.valueOf(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())) );
+            int timeToPass = 60; // time in minutes
+            int timeToPassSeconds =timeToPass*60; // time in minutes
+
+            double timePast = currentTime - timeToPassSeconds;
+            System.out.println(currentTime);
+            
             for (malakas.Features iter: feat_arr)
             {
+                double timeFromObject = Double.parseDouble( iter.attributes.Time_Stamp);
 
-                if(iter.attributes.BSSID.toString().equals(wifiName))
+
+                if(iter.attributes.BSSID.toString().equals(wifiName1) || iter.attributes.BSSID.toString().equals(wifiName2) || iter.attributes.BSSID.toString().equals(wifiName3) || iter.attributes.BSSID.toString().equals(wifiName4) )
                 {
-                    String mac = iter.attributes.MAC;
-                    double signal = Double.parseDouble (iter.attributes.RSSI );
-                    double unqID  = Double.parseDouble( iter.attributes.ObjectId );
-                    String lbl = iter.attributes.Room_ID;
+                    if(timeFromObject >= timePast)
+                    {
+                        String mac = iter.attributes.MAC;
+                        double signal = Double.parseDouble (iter.attributes.RSSI );
+                        double unqID  = Double.parseDouble( iter.attributes.ObjectId );
+                        String lbl = iter.attributes.Room_ID;
+                        
+                        double timestamp = Double.parseDouble(iter.attributes.Time_Stamp);
+    
+                        knnObjList.add( new knn_methods(mac, signal, unqID, lbl));
 
-                    knnObjList.add( new knn_methods(mac, signal, unqID, lbl));
+                    }
                 }
             }
 
-            System.out.println("we have so many "+ wifiName + " training wifi samples " +knnObjList.size());
+            System.out.println("we have so many " + " training wifi samples " +knnObjList.size());
 
         } catch (Exception e)
         {
@@ -138,4 +158,3 @@ public class App {
 
     }
 }
-
