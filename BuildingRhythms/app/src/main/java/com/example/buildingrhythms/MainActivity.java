@@ -16,6 +16,7 @@ import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -23,6 +24,8 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
 import com.esri.arcgisruntime.concurrent.ListenableFuture;
 import com.esri.arcgisruntime.data.ArcGISFeature;
 import com.esri.arcgisruntime.data.Feature;
@@ -48,11 +51,16 @@ import com.esri.arcgisruntime.symbology.SimpleRenderer;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -70,6 +78,8 @@ import com.google.gson.*;
 
 
 public class MainActivity extends AppCompatActivity {
+    RequestQueue queue = Volley.newRequestQueue(this);
+
 
     private SceneView mSceneView;
     WifiManager wifiManager;
@@ -195,14 +205,14 @@ public class MainActivity extends AppCompatActivity {
         try {
             String sURL = "https://services3.arcgis.com/jR9a3QtlDyTstZiO/ArcGIS/rest/services/BK_MAP_INDOOR_WFL1/FeatureServer/4/query?where=NAME+like+%27%25"+room_id+"%25%27&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=NAME%2C+OCCUPANCY%2C+OBJECTID&returnGeometry=false&returnCentroid=false&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pjson&token=";
             URL url = new URL(sURL);
-            URLConnection request = url.openConnection();
+            HttpURLConnection request = (HttpURLConnection) url.openConnection();
 
             request.connect();
             //Log.d("REQUEST", "updateOccupancy: "+ request.getContent());
 
             JsonParser jp = new JsonParser(); //from gson
-            JsonElement root = jp.parse(new InputStreamReader((InputStream) request.getContent())); //Convert the input stream to a json element
-            JsonObject rootobj = root.getAsJsonObject()  ;
+            JsonElement root = jp.parse(new InputStreamReader((InputStream) request.getInputStream())); //Convert the input stream to a json element
+            JsonObject rootobj = root.getAsJsonObject();
 
 
             Gson gson = new GsonBuilder().create();
@@ -216,19 +226,53 @@ public class MainActivity extends AppCompatActivity {
                 String objectID = iter.attributes.OBJECTID;
                 currOBJECTID = objectID;
                 roomOccupancy = currOcc;
-                System.out.println("There are " + currOcc +" people in room "+mRoom);
+                System.out.println("There are " + currOcc +" people in room "+mRoom+" with objectID "+objectID);
                 Toast.makeText(MainActivity.this,"You are in room "+mRoom+". There are "+currOcc+" people in the room with you",Toast.LENGTH_SHORT).show()
 ;
             }
+            request.disconnect();
         } catch (Exception e) {
             e.printStackTrace();
         }
 
 
 
+        if(plusminus > 0){
+            JSONObject postRequest = new JSONObject();
+            JSONObject mBody = new JSONObject();
 
-        if(plusminus < 0){
-            //TODO
+            try {
+                mBody.put("OBJECTID",currOBJECTID);
+                mBody.put("OCCUPANCY", (roomOccupancy+1));
+                postRequest.put("attributes", mBody);
+                String postData = "features=["+postRequest.toString()+"]";
+                URL url = new URL("https://services3.arcgis.com/jR9a3QtlDyTstZiO/ArcGIS/rest/services/BK_MAP_INDOOR_WFL1/FeatureServer/4/updateFeatures");
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                try {
+
+                    conn.setRequestMethod("POST");
+                    conn.setRequestProperty("Content-Type", "application/application/x-www-form-urlencoded;charset=UTF-8");
+                    conn.setRequestProperty("Accept","text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9");
+                    conn.setDoOutput(true);
+                    DataOutputStream os = new DataOutputStream(conn.getOutputStream());
+                    os.writeBytes(postData);
+                    os.flush();
+                    os.close();
+
+                    Log.i("STATUS", String.valueOf(conn.getResponseCode()));
+
+                    conn.disconnect();
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            System.out.println(postRequest);
         }else{
             //TODO
         }
