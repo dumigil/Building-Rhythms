@@ -15,6 +15,7 @@ import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -23,6 +24,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.esri.arcgisruntime.concurrent.ListenableFuture;
+import com.esri.arcgisruntime.data.ArcGISFeature;
 import com.esri.arcgisruntime.data.Feature;
 import com.esri.arcgisruntime.data.FeatureQueryResult;
 import com.esri.arcgisruntime.data.QueryParameters;
@@ -46,7 +48,15 @@ import com.esri.arcgisruntime.symbology.SimpleRenderer;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -54,6 +64,10 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Scanner;
+
+import com.google.gson.*;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -70,8 +84,16 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<String> arrayList = new ArrayList<>();
     private ArrayAdapter adapter;
 
+    public String currentRoom;
+    public String previousRoom;
+    public int  roomOccupancy;
+    public String currOBJECTID;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ArcGISRuntimeEnvironment.setApiKey(keys.api_key_02062021);
@@ -137,6 +159,7 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     wifiManager.startScan();
                     //getData(serviceFeatureTableArduino);
+                    updateOccupancy("08.02.00.760",1);
 
                 }
             }
@@ -166,6 +189,51 @@ public class MainActivity extends AppCompatActivity {
             wifiManager.startScan();
         }
     }
+    public void updateOccupancy(String room_id,@NonNull int plusminus ){
+        //TODO
+
+        try {
+            String sURL = "https://services3.arcgis.com/jR9a3QtlDyTstZiO/ArcGIS/rest/services/BK_MAP_INDOOR_WFL1/FeatureServer/4/query?where=NAME+like+%27%25"+room_id+"%25%27&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=NAME%2C+OCCUPANCY%2C+OBJECTID&returnGeometry=false&returnCentroid=false&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pjson&token=";
+            URL url = new URL(sURL);
+            URLConnection request = url.openConnection();
+
+            request.connect();
+            //Log.d("REQUEST", "updateOccupancy: "+ request.getContent());
+
+            JsonParser jp = new JsonParser(); //from gson
+            JsonElement root = jp.parse(new InputStreamReader((InputStream) request.getContent())); //Convert the input stream to a json element
+            JsonObject rootobj = root.getAsJsonObject()  ;
+
+
+            Gson gson = new GsonBuilder().create();
+            indoorModel value = gson.fromJson(root, indoorModel.class);
+            indoorModel.Features[] feat_arr = value.features;
+
+            System.out.println("There are so many features: \t"+ feat_arr.length);
+            for (indoorModel.Features iter: feat_arr){
+                String mRoom = iter.attributes.NAME;
+                int currOcc = iter.attributes.OCCUPANCY;
+                String objectID = iter.attributes.OBJECTID;
+                currOBJECTID = objectID;
+                roomOccupancy = currOcc;
+                System.out.println("There are " + currOcc +" people in room "+mRoom);
+                Toast.makeText(MainActivity.this,"You are in room "+mRoom+". There are "+currOcc+" people in the room with you",Toast.LENGTH_SHORT).show()
+;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+
+
+        if(plusminus < 0){
+            //TODO
+        }else{
+            //TODO
+        }
+    }
+
     @Override
     protected void onPause() {
         super.onPause();
