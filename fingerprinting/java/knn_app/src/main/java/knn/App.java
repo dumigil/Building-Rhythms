@@ -2,15 +2,19 @@ package knn;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.net.URL;
 import java.net.URLConnection;
 
 import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import com.google.gson.*;
 import knn.malakas;
 import knn.knn_methods;
+import org.graalvm.compiler.lir.LIRFrameState;
 import org.joda.time.LocalTime;
 
 // @SuppressWarnings
@@ -18,7 +22,7 @@ public class App {
 
     // Scanner sc = new Scanner(System.in);
     int knn_value = 5;
-	// int totalNumberOfLabel = 0;
+    // int totalNumberOfLabel = 0;
     public static double[] a = {1,2,3,4,5,6,7};
     public static double[] b = {10,20,30,40,50,60,70};
 
@@ -51,41 +55,23 @@ public class App {
             // CREATE A list for storing knn object methods
 
 
-            String wifiName1 = "eduroam";
-            String wifiName2 = "TUvisitor";
-            String wifiName3 = "Delft Free Wifi";
-            String wifiName4 = "tudelft-dastud";
-
-            double currentTime = Double.parseDouble( String.valueOf(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())) );
-            int timeToPass = 60; // time in minutes
-            int timeToPassSeconds =timeToPass*60; // time in minutes
-
-            double timePast = currentTime - timeToPassSeconds;
-            System.out.println(currentTime);
-            
+            String wifiName = "eduroam";
             for (malakas.Features iter: feat_arr)
             {
-                double timeFromObject = Double.parseDouble( iter.attributes.Time_Stamp);
 
-
-                if(iter.attributes.BSSID.toString().equals(wifiName1) || iter.attributes.BSSID.toString().equals(wifiName2) || iter.attributes.BSSID.toString().equals(wifiName3) || iter.attributes.BSSID.toString().equals(wifiName4) )
+                if(iter.attributes.BSSID.toString().equals(wifiName))
                 {
-                    if(timeFromObject >= timePast)
-                    {
-                        String mac = iter.attributes.MAC;
-                        double signal = Double.parseDouble (iter.attributes.RSSI );
-                        double unqID  = Double.parseDouble( iter.attributes.ObjectId );
-                        String lbl = iter.attributes.Room_ID;
-                        
-                        double timestamp = Double.parseDouble(iter.attributes.Time_Stamp);
-    
-                        knnObjList.add( new knn_methods(mac, signal, unqID, lbl));
+                    String mac = iter.attributes.MAC;
+                    double signal = Double.parseDouble (iter.attributes.RSSI );
+                    double unqID  = Double.parseDouble( iter.attributes.ObjectId );
+                    String lbl = iter.attributes.Room_ID;
 
-                    }
+                    knnObjList.add( new knn_methods(mac, signal, unqID, lbl));
                 }
             }
+            uniqueMaker(knnObjList);
 
-            System.out.println("we have so many " + " training wifi samples " +knnObjList.size());
+            System.out.println("we have so many "+ wifiName + " training wifi samples " +knnObjList.size());
 
         } catch (Exception e)
         {
@@ -129,19 +115,89 @@ public class App {
 //        // normalize signal values
 //    }
 
-//    public double getEuclideanDistance(ArrayList<knn.knn_methods> objList,  knn_methods test_feat)
+//    public void majorityVoter(ArrayList<Double> distList, int k)
 //    {
-//        // takes all knn objects and the test object, calculates distances
-//        double sum = 0;
-//        for (int i = 0; i < features1.length; i++)
-//        {  //System.out.println(features1[i]+" "+features2[i]);
-//            //applied Euclidean distance formula
-//            sum += Math.pow(features1[i] - features2[i], 2);
+////        HashMap counts = new HashMap<String, Integer>();
+////        ArrayList<Double> sortList
+//        int max = -100;
+//        for(String item : distList)
+//        {
+////             set sort and get top k max objects
+//
+////        counts.put(item, Integer.parseInt( counts.get(item) ) + 1  );
 //        }
-//        return Math.sqrt(sum);
+//        // max value is obtained
+//
+//        // iterate through the hashmap to find the max k objects
 //    }
 
-    public static void main(String[] args) throws Exception 
+    public void uniqueMaker(ArrayList<knn_methods> listObj)
+    {
+        // makes unique id for the macids
+        // and sets
+
+        //first creates a hashmap
+        Map counts = new HashMap<String, Integer>(); //key is macID values is count
+
+        for(knn_methods item : listObj) {
+            counts.put(item.MAC, 1);// counts.get(item.MAC) +
+        }// hash map is made
+
+        // update counts to store the unique number values
+        int  counter=0;
+        Iterator<Map.Entry<String, Integer>> iter =  counts.entrySet().iterator();
+
+        while( iter.hasNext() )
+        {
+            Map.Entry<String, Integer> entry = iter.next();
+            String k = (String) entry.getKey();
+            counts.put(k, counter );
+            counter+=1;
+        }
+        System.out.println(counts.toString());
+
+        // now set the macno of the objects
+        for(knn_methods item : listObj)
+        {
+            // get mac no of obj
+            String mac = item.MAC.toString();
+
+            // check the mac with unique macno
+            if(counts.containsKey(mac))
+            {
+                // get value of this mac
+                int macno = (int) counts.get(mac);
+                // set the macno of the objects
+                item.setMacNo(macno);
+            }
+
+        }
+
+//        return counts; //returns for getting number on test dataset
+    }
+
+
+    public ArrayList<Double> getEuclideanDistance(ArrayList<knn.knn_methods> objList, knn_methods test_feat)
+    {
+
+        // takes all knn objects and single test object, calculates distances
+        ArrayList<Double> distList = new ArrayList<>();
+        for (knn_methods item: objList)
+        {
+
+            double sum = 0;
+            //applied Euclidean distance formula
+            sum += Math.pow(item.RSSI - test_feat.RSSI, 2);
+            sum += Math.pow(item.uniqueId - test_feat.uniqueId, 2);
+            double val = Math.sqrt(sum);
+            distList.add(val);
+
+        }
+        return distList;
+    }
+
+
+    public static void main(String[] args) throws Exception
     {
 
         try
@@ -149,7 +205,11 @@ public class App {
             App mainObj = new App();
             ArrayList<knn.knn_methods> kNN_Objs = new ArrayList<knn.knn_methods>();
             kNN_Objs = mainObj.readJson();
+            System.out.println("mac no of 7th obj "+ kNN_Objs.get(7).MAC +" and macno is  " +kNN_Objs.get(10).macno);
 
+//            Map h = mainObj.uniqueMaker(kNN_Objs);
+
+//            System.out.println(h.toString());
         }
         catch(Exception e)
         {
@@ -158,3 +218,4 @@ public class App {
 
     }
 }
+

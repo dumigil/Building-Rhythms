@@ -4,6 +4,7 @@ public class knn_methods {
     public double RSSI;
     public double uniqueId;
     public String label;
+    public int macno;
     // constructor for those with label
     knn_methods(String mac, double signal, double unqID, String lbl)
     {
@@ -19,6 +20,11 @@ public class knn_methods {
         this.RSSI = signal;
         this.uniqueId = unqID;
 
+    }
+
+    public void setMacNo(int n)
+    {
+        this.macno = n;
     }
 
     public double getManhattanDistance(final double[] features1, final double[] features2)

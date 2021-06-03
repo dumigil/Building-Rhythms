@@ -5,11 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e498766e-d425-477a-b0d9-99b23a7b3b2c" name="Default Changelist" comment="added class to store features, minmax of knnmethods object list">
-      <change beforePath="$PROJECT_DIR$/../../../BuildingRhythms/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../../BuildingRhythms/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/knn/App.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/knn/App.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/knn/App.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/classes/java/main/knn/knn_methods.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/knn/knn_methods.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/tmp/compileJava/source-classes-mapping.txt" beforeDir="false" afterPath="$PROJECT_DIR$/build/tmp/compileJava/source-classes-mapping.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/knn/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/knn/App.java" afterDir="false" />
