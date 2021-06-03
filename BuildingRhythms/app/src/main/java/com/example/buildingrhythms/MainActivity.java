@@ -78,7 +78,6 @@ import com.google.gson.*;
 
 
 public class MainActivity extends AppCompatActivity {
-    RequestQueue queue = Volley.newRequestQueue(this);
 
 
     private SceneView mSceneView;
@@ -249,10 +248,8 @@ public class MainActivity extends AppCompatActivity {
                 URL url = new URL("https://services3.arcgis.com/jR9a3QtlDyTstZiO/ArcGIS/rest/services/BK_MAP_INDOOR_WFL1/FeatureServer/4/updateFeatures");
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 try {
-
                     conn.setRequestMethod("POST");
-                    conn.setRequestProperty("Content-Type", "application/application/x-www-form-urlencoded;charset=UTF-8");
-                    conn.setRequestProperty("Accept","text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9");
+                    conn.setRequestProperty("Content-Type", "/application/x-www-form-urlencoded;charset=UTF-8");
                     conn.setDoOutput(true);
                     DataOutputStream os = new DataOutputStream(conn.getOutputStream());
                     os.writeBytes(postData);
