@@ -54,13 +54,17 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -75,6 +79,16 @@ import java.util.List;
 import java.util.Scanner;
 
 import com.google.gson.*;
+
+import javax.net.ssl.HttpsURLConnection;
+
+import okhttp3.Call;
+import okhttp3.FormBody;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -97,6 +111,9 @@ public class MainActivity extends AppCompatActivity {
     public String previousRoom;
     public int  roomOccupancy;
     public String currOBJECTID;
+    public static final MediaType JSON
+            = MediaType.get("application/json; charset=utf-8");
+    OkHttpClient client = new OkHttpClient();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -244,24 +261,12 @@ public class MainActivity extends AppCompatActivity {
                 mBody.put("OBJECTID",currOBJECTID);
                 mBody.put("OCCUPANCY", (roomOccupancy+1));
                 postRequest.put("attributes", mBody);
-                String postData = "features=["+postRequest.toString()+"]";
-                URL url = new URL("https://services3.arcgis.com/jR9a3QtlDyTstZiO/ArcGIS/rest/services/BK_MAP_INDOOR_WFL1/FeatureServer/4/updateFeatures");
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                try {
-                    conn.setRequestMethod("POST");
-                    conn.setRequestProperty("Content-Type", "/application/x-www-form-urlencoded;charset=UTF-8");
-                    conn.setDoOutput(true);
-                    DataOutputStream os = new DataOutputStream(conn.getOutputStream());
-                    os.writeBytes(postData);
-                    os.flush();
-                    os.close();
+                String postData = postRequest.toString();
+                String url = "https://services3.arcgis.com/jR9a3QtlDyTstZiO/ArcGIS/rest/services/BK_MAP_INDOOR_WFL1/FeatureServer/4/updateFeatures";
+                whenPostJson_thenCorrect(currOBJECTID, String.valueOf((roomOccupancy+1)), url);
+                System.out.println(postData);
 
-                    Log.i("STATUS", String.valueOf(conn.getResponseCode()));
 
-                    conn.disconnect();
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
             } catch (JSONException e) {
                 e.printStackTrace();
             } catch (MalformedURLException e) {
@@ -269,10 +274,26 @@ public class MainActivity extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            System.out.println(postRequest);
         }else{
             //TODO
         }
+    }
+    public void whenPostJson_thenCorrect(String obj,String occ, String url) throws IOException {
+
+
+        RequestBody formBody = new FormBody.Builder()
+                .add("OBJECTID", obj)
+                .add("OCCUPANCY", occ)
+                .build();
+
+        Request request = new Request.Builder()
+                .url(url)
+                .post(formBody)
+                .build();
+
+        Call call = client.newCall(request);
+        Response response = call.execute();
+        System.out.println(response);
     }
 
     @Override
