@@ -6,10 +6,7 @@ import java.lang.reflect.Array;
 import java.net.URL;
 import java.net.URLConnection;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 import com.google.gson.*;
 
@@ -188,8 +185,9 @@ public class App {
             double sum = 0;
             //applied Euclidean distance formula
             sum += Math.pow(item.RSSI - test_feat.RSSI, 2);
-            sum += Math.pow(item.uniqueId - test_feat.uniqueId, 2);
+            sum += Math.pow(item.macno - test_feat.macno, 2);
             double val = Math.sqrt(sum);
+            // System.out.println(val);
             distList.add(val);
         }
 
@@ -197,8 +195,8 @@ public class App {
         // distlist is same size as objlist, so labels can be extracted easily, just know the indices of the min k labels
 
         //maybe label but make a new function to give
-        majorityVoter(distList, objList, 5);
-        System.out.println("lol");
+        majorityVoter(distList, objList, 10);
+
         return distList;
     }
 
@@ -230,14 +228,23 @@ public class App {
                     maxIdx = j;
                 }
             }
-
+//            System.out.println( maxIdx);
             if (minDist[maxIdx] > dist)
             {
                 minDist[maxIdx] = dist;
                 indices[maxIdx] = i;
             }
         }
-        System.out.println("\n\n\n\twtfwtfwtfwtfwtfwtfwtfwtfwtfwtfwtfwtfw\n");
+        System.out.println(Arrays.toString( minDist) );
+        System.out.println(Arrays.toString( indices) );
+        System.out.println(distList);
+
+        //check label of indices
+        for (int i :indices)
+        {
+            System.out.println( objList.get(i).label );
+        }
+
         return indices;
     }
 
@@ -261,7 +268,7 @@ public class App {
             {
                 test_obj.setMacNo( (Integer) macnos.get(test_obj.MAC) );
             }
-
+            mainObj.getEuclideanDistance(kNN_Objs , test_obj);
             System.out.println(test_obj.macno);
 
             //            System.out.println("mac no of 7th obj "+ kNN_Objs.get(7).MAC +" and macno is  " +kNN_Objs.get(10).macno);
