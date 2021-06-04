@@ -7,6 +7,7 @@ import java.net.URL;
 import java.net.URLConnection;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import com.google.gson.*;
 
@@ -82,7 +83,7 @@ public class App {
 
             for (malakas.Features iter: feat_arr)
             {
-                double timeFromObject = Double.parseDouble( iter.attributes.Time_Stamp);
+                // double timeFromObject = Double.parseDouble( iter.attributes.Time_Stamp);
 
                 if(iter.attributes.BSSID.toString().equals(wifiName1) || iter.attributes.BSSID.toString().equals(wifiName2) || iter.attributes.BSSID.toString().equals(wifiName3) || iter.attributes.BSSID.toString().equals(wifiName4) )
                 {

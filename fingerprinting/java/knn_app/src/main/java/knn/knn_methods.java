@@ -42,6 +42,8 @@ public class knn_methods {
     {
         System.out.println("\n wtf dude! i am in this method \n"); //prints integer  
     }
+    public void setMacNo(Integer n) {
+    }
 
 
 
