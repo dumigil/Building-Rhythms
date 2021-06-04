@@ -101,13 +101,12 @@ public class MainActivity extends AppCompatActivity {
     private SceneView mSceneView;
     WifiManager wifiManager;
     private ListView wifiList;
-    public JSONArray resultList;
     private Button buttonScan;
     private final int MY_PERMISSIONS_ACCESS_COARSE_LOCATION = 1;
     private List<ScanResult> results;
     WifiReceiver receiverWifi;
     private boolean withExtrusion = true;
-
+    public ArrayList<JSONObject> resultList = new ArrayList<>();
     private ArrayList<String> arrayList = new ArrayList<>();
     private ArrayAdapter adapter;
 
@@ -186,14 +185,18 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     for(int i =0; i<=30; i++){
                         wifiManager.startScan();
+                        //System.out.println(receiverWifi.wifiResultList.getClass().getSimpleName());
+                        JSONObject js = receiverWifi.getWifiResultList();
+                        resultList.add(js);
                     }
                     System.out.println(resultList);
-                    updateOccupancy("08.02.00.760",1);
+                    //updateOccupancy("08.02.00.760",1);
 
                 }
             }
         });
     }
+
     @Override
     protected void onPostResume() {
         super.onPostResume();
@@ -201,6 +204,7 @@ public class MainActivity extends AppCompatActivity {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
         registerReceiver(receiverWifi, intentFilter);
+
         getWifi();
     }
     private void getWifi() {

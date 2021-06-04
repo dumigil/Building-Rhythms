@@ -21,6 +21,7 @@ class WifiReceiver extends BroadcastReceiver {
     WifiManager wifiManager;
     StringBuilder sb;
     public JSONObject wifiResultList = new JSONObject();
+
     ListView wifiDeviceList;
     public WifiReceiver(WifiManager wifiManager, ListView wifiDeviceList) {
         this.wifiManager = wifiManager;
@@ -33,16 +34,19 @@ class WifiReceiver extends BroadcastReceiver {
             List<ScanResult> wifiList = wifiManager.getScanResults();
             ArrayList<String> deviceList = new ArrayList<>();
             for (ScanResult scanResult : wifiList) {
+                JSONObject currResult = new JSONObject();
                 sb.append("\n").append(scanResult.SSID).append(" - ").append(scanResult.capabilities);
                 deviceList.add(scanResult.SSID + " - " + scanResult.capabilities);
-                Log.d("WIFI_RESULT",scanResult.BSSID + ": " + scanResult.level);
+                //Log.d("WIFI_RESULT",scanResult.BSSID + ": " + scanResult.level);
                 try {
-                    wifiResultList.put(scanResult.BSSID, scanResult.level);
+                    currResult.put("MAC", scanResult.BSSID);
+                    currResult.put("RSSI", scanResult.level);
+                    wifiResultList.put("attributes", currResult);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
-            Log.d("WIFI_RESULT_JSON",wifiResultList.toString());
+            //Log.d("WIFI_RESULT_JSON",wifiResultList.toString());
             Toast.makeText(context, sb, Toast.LENGTH_SHORT).show();
             ArrayAdapter arrayAdapter = new ArrayAdapter(context, android.R.layout.simple_list_item_1, deviceList.toArray());
             wifiDeviceList.setAdapter(arrayAdapter);
