@@ -20,7 +20,7 @@ import java.util.List;
 class WifiReceiver extends BroadcastReceiver {
     WifiManager wifiManager;
     StringBuilder sb;
-    JSONObject wifiResultList = new JSONObject();
+    public JSONObject wifiResultList = new JSONObject();
     ListView wifiDeviceList;
     public WifiReceiver(WifiManager wifiManager, ListView wifiDeviceList) {
         this.wifiManager = wifiManager;
@@ -47,5 +47,9 @@ class WifiReceiver extends BroadcastReceiver {
             ArrayAdapter arrayAdapter = new ArrayAdapter(context, android.R.layout.simple_list_item_1, deviceList.toArray());
             wifiDeviceList.setAdapter(arrayAdapter);
         }
+    }
+
+    public JSONObject getWifiResultList() {
+        return wifiResultList;
     }
 }

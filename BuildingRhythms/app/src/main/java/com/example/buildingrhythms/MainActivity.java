@@ -24,7 +24,15 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkResponse;
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.HttpHeaderParser;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.esri.arcgisruntime.concurrent.ListenableFuture;
 import com.esri.arcgisruntime.data.ArcGISFeature;
@@ -65,12 +73,14 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -82,13 +92,7 @@ import com.google.gson.*;
 
 import javax.net.ssl.HttpsURLConnection;
 
-import okhttp3.Call;
-import okhttp3.FormBody;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
+
 
 
 public class MainActivity extends AppCompatActivity {
@@ -97,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
     private SceneView mSceneView;
     WifiManager wifiManager;
     private ListView wifiList;
-    private JSONArray resultList;
+    public JSONArray resultList;
     private Button buttonScan;
     private final int MY_PERMISSIONS_ACCESS_COARSE_LOCATION = 1;
     private List<ScanResult> results;
@@ -111,9 +115,6 @@ public class MainActivity extends AppCompatActivity {
     public String previousRoom;
     public int  roomOccupancy;
     public String currOBJECTID;
-    public static final MediaType JSON
-            = MediaType.get("application/json; charset=utf-8");
-    OkHttpClient client = new OkHttpClient();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -183,8 +184,10 @@ public class MainActivity extends AppCompatActivity {
                     ActivityCompat.requestPermissions(
                             MainActivity.this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, MY_PERMISSIONS_ACCESS_COARSE_LOCATION);
                 } else {
-                    wifiManager.startScan();
-                    //getData(serviceFeatureTableArduino);
+                    for(int i =0; i<=30; i++){
+                        wifiManager.startScan();
+                    }
+                    System.out.println(resultList);
                     updateOccupancy("08.02.00.760",1);
 
                 }
@@ -216,8 +219,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     public void updateOccupancy(String room_id,@NonNull int plusminus ){
-        //TODO
-
         try {
             String sURL = "https://services3.arcgis.com/jR9a3QtlDyTstZiO/ArcGIS/rest/services/BK_MAP_INDOOR_WFL1/FeatureServer/4/query?where=NAME+like+%27%25"+room_id+"%25%27&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=NAME%2C+OCCUPANCY%2C+OBJECTID&returnGeometry=false&returnCentroid=false&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pjson&token=";
             URL url = new URL(sURL);
@@ -261,40 +262,107 @@ public class MainActivity extends AppCompatActivity {
                 mBody.put("OBJECTID",currOBJECTID);
                 mBody.put("OCCUPANCY", (roomOccupancy+1));
                 postRequest.put("attributes", mBody);
-                String postData = postRequest.toString();
                 String url = "https://services3.arcgis.com/jR9a3QtlDyTstZiO/ArcGIS/rest/services/BK_MAP_INDOOR_WFL1/FeatureServer/4/updateFeatures";
-                whenPostJson_thenCorrect(currOBJECTID, String.valueOf((roomOccupancy+1)), url);
-                System.out.println(postData);
+                RequestQueue requestQueue = Volley.newRequestQueue(this);
+                final String requestBody = "features=["+postRequest.toString()+"]";
+                System.out.println(requestBody);
+                StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.i("VOLLEY", response);
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("VOLLEY", error.toString());
+                    }
+                }) {
+                    @Override
+                    public String getBodyContentType() {
+                        return "application/x-www-form-urlencoded; charset=UTF-8";
+                    }
+                    @Override
+                    public byte[] getBody() throws AuthFailureError {
+                        try {
+                            return requestBody == null ? null : requestBody.getBytes("utf-8");
+                        } catch (UnsupportedEncodingException uee) {
+                            VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", requestBody, "utf-8");
+                            return null;
+                        }
+                    }
+                    @Override
+                    protected Response<String> parseNetworkResponse(NetworkResponse response) {
+                        String responseString = "";
+                        if (response != null) {
+                            responseString = String.valueOf(response.allHeaders);
 
+                            // can get more details such as response.headers
+
+                        }
+                        return Response.success(responseString, HttpHeaderParser.parseCacheHeaders(response));
+                    }
+                };
+                requestQueue.add(stringRequest);
 
             } catch (JSONException e) {
                 e.printStackTrace();
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
             }
         }else{
-            //TODO
+            JSONObject postRequest = new JSONObject();
+            JSONObject mBody = new JSONObject();
+
+            try {
+                mBody.put("OBJECTID",currOBJECTID);
+                mBody.put("OCCUPANCY", (roomOccupancy-1));
+                postRequest.put("attributes", mBody);
+                String url = "https://services3.arcgis.com/jR9a3QtlDyTstZiO/ArcGIS/rest/services/BK_MAP_INDOOR_WFL1/FeatureServer/4/updateFeatures";
+                RequestQueue requestQueue = Volley.newRequestQueue(this);
+                final String requestBody = "features=["+postRequest.toString()+"]";
+                System.out.println(requestBody);
+                StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.i("VOLLEY", response);
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("VOLLEY", error.toString());
+                    }
+                }) {
+                    @Override
+                    public String getBodyContentType() {
+                        return "application/x-www-form-urlencoded; charset=UTF-8";
+                    }
+                    @Override
+                    public byte[] getBody() throws AuthFailureError {
+                        try {
+                            return requestBody == null ? null : requestBody.getBytes("utf-8");
+                        } catch (UnsupportedEncodingException uee) {
+                            VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", requestBody, "utf-8");
+                            return null;
+                        }
+                    }
+                    @Override
+                    protected Response<String> parseNetworkResponse(NetworkResponse response) {
+                        String responseString = "";
+                        if (response != null) {
+                            responseString = String.valueOf(response.allHeaders);
+
+                            // can get more details such as response.headers
+
+                        }
+                        return Response.success(responseString, HttpHeaderParser.parseCacheHeaders(response));
+                    }
+                };
+                requestQueue.add(stringRequest);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
-    public void whenPostJson_thenCorrect(String obj,String occ, String url) throws IOException {
 
-
-        RequestBody formBody = new FormBody.Builder()
-                .add("OBJECTID", obj)
-                .add("OCCUPANCY", occ)
-                .build();
-
-        Request request = new Request.Builder()
-                .url(url)
-                .post(formBody)
-                .build();
-
-        Call call = client.newCall(request);
-        Response response = call.execute();
-        System.out.println(response);
-    }
 
     @Override
     protected void onPause() {
@@ -316,47 +384,7 @@ public class MainActivity extends AppCompatActivity {
             break;
         }
     }
-    private void getData(ServiceFeatureTable serviceFeatureTable){
-        QueryParameters queryParameters = new QueryParameters();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-        Date fiveMinAgoTime = Calendar.getInstance().getTime();
-        Date nowTime = Calendar.getInstance().getTime();
-
-        Calendar now = toCalendar(nowTime);
-        Calendar fiveMinAgo = toCalendar(fiveMinAgoTime);
-        fiveMinAgo.add(Calendar.DATE, -20);
-        Date fiveMinDate = fiveMinAgo.getTime();
-
-        Log.d("NOW", dateFormat.format(nowTime));
-        Log.d("NOW-FIVE", dateFormat.format(fiveMinDate));
-
-        TimeExtent timeExtent = new TimeExtent(fiveMinAgo, now);
-        queryParameters.setTimeExtent(timeExtent);
-
-        final ListenableFuture<FeatureQueryResult> future = serviceFeatureTable.queryFeaturesAsync(queryParameters);
-        // add done loading listener to fire when the selection returns
-        future.addDoneListener(() -> {
-            try {
-                // call get on the future to get the result
-                FeatureQueryResult result = future.get();
-                // check there are some results
-                Iterator<Feature> resultIterator = result.iterator();
-                if (resultIterator.hasNext()) {
-                    // get the extent of the first feature in the result to zoom to
-                    Feature feature = resultIterator.next();
-                    Log.d("WIFI_TABLE", feature.getAttributes().toString());
-
-                } else {
-                    Toast.makeText(this, "No WiFi data available for localisation ", Toast.LENGTH_LONG).show();
-                }
-            } catch (Exception e) {
-                String error = "Feature search failed for: " + queryParameters + ". Error: " + e.getMessage();
-                Toast.makeText(this, error, Toast.LENGTH_LONG).show();
-                Log.e("ERROR", error);
-            }
-        });
-    }
 
     public static Calendar toCalendar(Date date){
         Calendar cal = Calendar.getInstance();
