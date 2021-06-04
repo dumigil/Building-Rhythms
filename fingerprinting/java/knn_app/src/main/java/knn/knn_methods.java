@@ -14,11 +14,11 @@ public class knn_methods {
         this.label = lbl;
     }
     //constructor without label
-    knn_methods(String mac, double signal, double unqID)
+    knn_methods(String mac, double signal)
     {
         this.MAC = mac;
         this.RSSI = signal;
-        this.uniqueId = unqID;
+//        this.uniqueId = unqID;
 
     }
 

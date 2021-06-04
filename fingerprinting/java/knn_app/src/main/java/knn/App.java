@@ -12,23 +12,35 @@ import java.util.Iterator;
 import java.util.Map;
 
 import com.google.gson.*;
-import knn.malakas;
-import knn.knn_methods;
-import org.graalvm.compiler.lir.LIRFrameState;
-import org.joda.time.LocalTime;
+
 
 // @SuppressWarnings
 public class App {
-
-    // Scanner sc = new Scanner(System.in);
-    int knn_value = 5;
-    // int totalNumberOfLabel = 0;
-    public static double[] a = {1,2,3,4,5,6,7};
-    public static double[] b = {10,20,30,40,50,60,70};
-
-    public ArrayList<knn_methods> readJson() throws Exception
+    class Tuple<K, V>
     {
+        private K one;
+        private V two;
+
+        public Tuple(K fir, V sec)
+        {
+            this.one = fir;
+            this.two = sec;
+        }
+        //getters
+        public K getOne() {
+            return one;
+        }
+
+        public V getTwo() {
+            return two;
+        }
+    }
+
+    public Tuple<ArrayList<knn_methods>, Map> readJson() throws Exception //ArrayList<knn_methods>
+    {
+        // local var to be returned
         ArrayList<knn_methods> knnObjList = new ArrayList<knn_methods>();
+        Map unq = new HashMap();
         try
         {
 
@@ -69,7 +81,7 @@ public class App {
                     knnObjList.add( new knn_methods(mac, signal, unqID, lbl));
                 }
             }
-            uniqueMaker(knnObjList);
+            unq = uniqueMaker(knnObjList);
 
             System.out.println("we have so many "+ wifiName + " training wifi samples " +knnObjList.size());
 
@@ -78,7 +90,7 @@ public class App {
             e.printStackTrace();
         }
 
-        return knnObjList;
+        return new Tuple<ArrayList<knn_methods> , Map>(knnObjList , unq)   ;
     }
 
     public double[] getMinMaxValue(ArrayList<knn_methods> objList, int type)
@@ -115,23 +127,9 @@ public class App {
 //        // normalize signal values
 //    }
 
-//    public void majorityVoter(ArrayList<Double> distList, int k)
-//    {
-////        HashMap counts = new HashMap<String, Integer>();
-////        ArrayList<Double> sortList
-//        int max = -100;
-//        for(String item : distList)
-//        {
-////             set sort and get top k max objects
-//
-////        counts.put(item, Integer.parseInt( counts.get(item) ) + 1  );
-//        }
-//        // max value is obtained
-//
-//        // iterate through the hashmap to find the max k objects
-//    }
 
-    public void uniqueMaker(ArrayList<knn_methods> listObj)
+
+    public Map uniqueMaker(ArrayList<knn_methods> listObj)
     {
         // makes unique id for the macids
         // and sets
@@ -154,6 +152,7 @@ public class App {
             counts.put(k, counter );
             counter+=1;
         }
+
         System.out.println(counts.toString());
 
         // now set the macno of the objects
@@ -173,7 +172,7 @@ public class App {
 
         }
 
-//        return counts; //returns for getting number on test dataset
+        return counts; //returns for getting number on test dataset
     }
 
 
@@ -181,6 +180,7 @@ public class App {
     {
 
         // takes all knn objects and single test object, calculates distances
+        // returns list of distances of the test from each training sample
         ArrayList<Double> distList = new ArrayList<>();
         for (knn_methods item: objList)
         {
@@ -191,9 +191,54 @@ public class App {
             sum += Math.pow(item.uniqueId - test_feat.uniqueId, 2);
             double val = Math.sqrt(sum);
             distList.add(val);
-
         }
+
+        // return list of distance or the label itself
+        // distlist is same size as objlist, so labels can be extracted easily, just know the indices of the min k labels
+
+        //maybe label but make a new function to give
+        majorityVoter(distList, objList, 5);
+        System.out.println("lol");
         return distList;
+    }
+
+
+    public int[] majorityVoter(ArrayList<Double> distList, ArrayList<knn.knn_methods> objList ,int k)
+    {
+
+        int[] indices = new int[k];
+        double[] minDist = new double[k];
+
+        // fill in values for minDist
+        for(int i=0; i<k; i++)
+        {
+            minDist[i] = Double.MAX_VALUE;
+        }
+
+        for (int i = 0; i < objList.size(); i++)
+        {
+            double dist = distList.get(i);
+            double max = Double.MIN_VALUE;
+            int maxIdx = 0;
+
+            for (int j = 0; j < k; j++)
+            {
+                // takes the max value from min array and takes its position
+                if (max < minDist[j])
+                {
+                    max = minDist[j];
+                    maxIdx = j;
+                }
+            }
+
+            if (minDist[maxIdx] > dist)
+            {
+                minDist[maxIdx] = dist;
+                indices[maxIdx] = i;
+            }
+        }
+        System.out.println("\n\n\n\twtfwtfwtfwtfwtfwtfwtfwtfwtfwtfwtfwtfw\n");
+        return indices;
     }
 
 
@@ -204,12 +249,22 @@ public class App {
         {
             App mainObj = new App();
             ArrayList<knn.knn_methods> kNN_Objs = new ArrayList<knn.knn_methods>();
-            kNN_Objs = mainObj.readJson();
-            System.out.println("mac no of 7th obj "+ kNN_Objs.get(7).MAC +" and macno is  " +kNN_Objs.get(10).macno);
+            Tuple<ArrayList<knn_methods> , Map> tup = mainObj.readJson();
+            kNN_Objs = tup.getOne();
+            Map macnos = tup.getTwo();
 
-//            Map h = mainObj.uniqueMaker(kNN_Objs);
+            // make test object for testing
+            knn_methods test_obj = new knn_methods( "84:3d:c6:c7:ef:50",  -42);
 
-//            System.out.println(h.toString());
+            //set macno of test obj
+            if( macnos.containsKey( (String) test_obj.MAC )  )
+            {
+                test_obj.setMacNo( (Integer) macnos.get(test_obj.MAC) );
+            }
+
+            System.out.println(test_obj.macno);
+
+            //            System.out.println("mac no of 7th obj "+ kNN_Objs.get(7).MAC +" and macno is  " +kNN_Objs.get(10).macno);
         }
         catch(Exception e)
         {

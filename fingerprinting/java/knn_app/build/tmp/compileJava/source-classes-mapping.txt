@@ -8,3 +8,4 @@ knn/knn_methods.java
  knn.knn_methods
 knn/App.java
  knn.App
+ knn.App$Tuple

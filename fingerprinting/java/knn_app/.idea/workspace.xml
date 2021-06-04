@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e498766e-d425-477a-b0d9-99b23a7b3b2c" name="Default Changelist" comment="added class to store features, minmax of knnmethods object list">
+    <list default="true" id="e498766e-d425-477a-b0d9-99b23a7b3b2c" name="Default Changelist" comment="changed uniquemaker to return">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/classes/java/main/knn/App.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/knn/App.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/classes/java/main/knn/knn_methods.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/knn/knn_methods.class" afterDir="false" />
@@ -117,7 +117,14 @@
       <option name="project" value="LOCAL" />
       <updated>1622495460466</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="added methods to make unique macno for every unique macID, improved eucledian dist, changed implementation to make unique maker on the go while loading knn objs">
+      <created>1622760925297</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1622760925297</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -135,6 +142,7 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="build works without currenttime now" />
     <MESSAGE value="added class to store features, minmax of knnmethods object list" />
-    <option name="LAST_COMMIT_MESSAGE" value="added class to store features, minmax of knnmethods object list" />
+    <MESSAGE value="added methods to make unique macno for every unique macID, improved eucledian dist, changed implementation to make unique maker on the go while loading knn objs" />
+    <option name="LAST_COMMIT_MESSAGE" value="added methods to make unique macno for every unique macID, improved eucledian dist, changed implementation to make unique maker on the go while loading knn objs" />
   </component>
 </project>
