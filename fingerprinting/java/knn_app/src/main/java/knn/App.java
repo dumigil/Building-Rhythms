@@ -46,7 +46,7 @@ public class App {
         try
         {
 
-            ////////////////// Read JSON ///////////////////
+            //////////////////////////////////// Read JSON /////////////////////////////////////
             String sURL = "https://services3.arcgis.com/jR9a3QtlDyTstZiO/ArcGIS/rest/services/Arduino_Table/FeatureServer/0/query?where=ObjectID%3E%3D0&outFields=MAC%2C+RSSI%2C+BSSID%2C+Room_ID+%2C+ObjectId+%2C+Time_Stamp+&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnDistinctValues=false&cacheHint=false&sqlFormat=none&f=pjson";
             URL url = new URL(sURL);
 
@@ -57,7 +57,7 @@ public class App {
             // Convert to a JSON object to malakas class object print data
             JsonParser jp = new JsonParser(); //from gson
             JsonElement root = jp.parse(new InputStreamReader((InputStream) request.getContent())); //Convert the input stream to a json element
-//            JsonObject rootobj = root.getAsJsonObject()  ;
+            // JsonObject rootobj = root.getAsJsonObject()  ;
 
             Gson gson = new GsonBuilder().create();
             malakas value = gson.fromJson(root, malakas.class);
@@ -67,7 +67,6 @@ public class App {
             System.out.println( "There are so many features: \t" +  feat_arr.length );
 
             // CREATE A list for storing knn object methods
-
 
             String wifiName = "eduroam";
             for (malakas.Features iter: feat_arr)
@@ -87,7 +86,8 @@ public class App {
 
             System.out.println("we have so many "+ wifiName + " training wifi samples " +knnObjList.size());
 
-        } catch (Exception e)
+        }
+        catch (Exception e)
         {
             e.printStackTrace();
         }
@@ -124,13 +124,6 @@ public class App {
         return minmax;
     }
 
-//    public void normalizer(ArrayList<knn_methods> objList)
-//    {
-//        // normalize signal values
-//    }
-
-
-
     public Map uniqueMaker(ArrayList<knn_methods> listObj)
     {
         // makes unique id for the macids
@@ -155,7 +148,7 @@ public class App {
             counter+=1;
         }
 
-        System.out.println(counts);
+//        System.out.println(counts);
 
         // now set the macno of the objects
         for(knn_methods item : listObj)
@@ -201,7 +194,7 @@ public class App {
 
         //maybe label but make a new function to give
 
-        return majorityVoter(distList, objList, 10);
+        return majorityVoter(distList, objList, 7);
     }
 
     public String classifier(ArrayList<String> labelsList)
@@ -231,7 +224,7 @@ public class App {
 
 
 
-            System.out.println("k is: "+k +" and v is: "+  v);
+//            System.out.println("k is: "+k +" and v is: "+  v);
             if(max < (int) t_max.getTwo())
             {
                 max = v;
@@ -285,12 +278,11 @@ public class App {
             {
                 minDist[maxIdx] = dist;
                 indices[maxIdx] = i;
-//
             }
         }
-        System.out.println(Arrays.toString( minDist) );
-        System.out.println(Arrays.toString( indices) );
-        System.out.println(distList);
+//        System.out.println(Arrays.toString( minDist) );
+//        System.out.println(Arrays.toString( indices) );
+//        System.out.println(distList);
 
         // make list of labels and then send to label voter
         ArrayList<String> labelsList = new ArrayList<>();
@@ -305,29 +297,75 @@ public class App {
         return feature_label;
     }
 
+    public String knn_test_features(ArrayList<knn_methods> testObjList) throws Exception
+    {
+        ///////////// read training set
+        Tuple<ArrayList<knn_methods> , Map> tup = readJson();
+        ArrayList<knn_methods> trainingObjList = tup.getOne();
+        Map macnos = tup.getTwo();
+
+
+        ///////////////////// TESTING set
+
+        ///////// read test obj and load as knn_methods objects
+//        String testJson = "{'attributes':{'MAC':'02:15:b2:00:01:00','RSSI':-50}}, {'attributes':{'MAC':'02:15:b2:00:01:00','RSSI':-50}}, {'attributes':{'MAC':'02:15:b2:00:01:00','RSSI':-50}}" ;
+//
+//        JsonElement root = new JsonParser().parse(testJson); //Convert the input stream to a json element
+//        Gson gson = new GsonBuilder().create();
+//
+//        malakas.Attributes value = gson.fromJson(root, malakas.Attributes.class);
+
+//        System.out.println(value);
+
+        /////////////////// assuming that the knn obj list is made
+
+        // make list of labels from
+        ArrayList<String> testLblList = new ArrayList<>();
+        for(knn_methods testerObj : testObjList)
+        {
+            //add macno to test features
+            if( macnos.containsKey( testerObj.MAC ) )
+            {
+                testerObj.setMacNo((Integer) macnos.get(testerObj.MAC));
+            }
+
+            //get label and update label in object
+            String lbl = getEuclideanDistance(trainingObjList , testerObj);
+            testerObj.label = lbl;
+            testLblList.add(lbl) ;
+        }
+        String finLabel = classifier(testLblList);
+        return finLabel;
+    }
+
+
     public static void main(String[] args)
     {
-
         try
         {
             App mainObj = new App();
+
+            ///////////// 4 lines below wont be needed
             ArrayList<knn_methods> kNN_Objs;
             Tuple<ArrayList<knn_methods> , Map> tup = mainObj.readJson();
             kNN_Objs = tup.getOne();
             Map macnos = tup.getTwo();
 
             // make test object for testing
-            knn_methods test_obj = new knn_methods( "84:3d:c6:c7:ef:50",  -90);
+            knn_methods test_obj = new knn_methods( "84:3d:c6:c7:ef:50",  -70);
 
             //set macno of test obj
             if( macnos.containsKey( test_obj.MAC )  )
             {
                 test_obj.setMacNo( (Integer) macnos.get(test_obj.MAC) );
             }
-            System.out.println( mainObj.getEuclideanDistance(kNN_Objs , test_obj)  );
-            System.out.println(test_obj.macno);
 
-            //            System.out.println("mac no of 7th obj "+ kNN_Objs.get(7).MAC +" and macno is  " +kNN_Objs.get(10).macno);
+            System.out.println( "the label is "+ mainObj.getEuclideanDistance(kNN_Objs , test_obj)  );
+
+            // to run the final code only below line is needed
+//            mainObj.knn_test_features();
+
+
         }
         catch(Exception e)
         {
