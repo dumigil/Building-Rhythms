@@ -2,7 +2,7 @@ package knn;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Array;
+
 import java.net.URL;
 import java.net.URLConnection;
 
@@ -13,10 +13,10 @@ import com.google.gson.*;
 
 // @SuppressWarnings
 public class App {
-    class Tuple<K, V>
+    static class Tuple<K, V>
     {
-        private K one;
-        private V two;
+        private final K one;
+        private final V two;
 
         public Tuple(K fir, V sec)
         {
@@ -36,7 +36,7 @@ public class App {
     public Tuple<ArrayList<knn_methods>, Map> readJson() throws Exception //ArrayList<knn_methods>
     {
         // local var to be returned
-        ArrayList<knn_methods> knnObjList = new ArrayList<knn_methods>();
+        ArrayList<knn_methods> knnObjList = new ArrayList<>();
         Map unq = new HashMap();
         try
         {
@@ -52,7 +52,7 @@ public class App {
             // Convert to a JSON object to malakas class object print data
             JsonParser jp = new JsonParser(); //from gson
             JsonElement root = jp.parse(new InputStreamReader((InputStream) request.getContent())); //Convert the input stream to a json element
-            JsonObject rootobj = root.getAsJsonObject()  ;
+//            JsonObject rootobj = root.getAsJsonObject()  ;
 
             Gson gson = new GsonBuilder().create();
             malakas value = gson.fromJson(root, malakas.class);
@@ -87,7 +87,7 @@ public class App {
             e.printStackTrace();
         }
 
-        return new Tuple<ArrayList<knn_methods> , Map>(knnObjList , unq)   ;
+        return new Tuple<ArrayList<knn_methods>, Map>(knnObjList, unq);
     }
 
     public double[] getMinMaxValue(ArrayList<knn_methods> objList, int type)
@@ -145,18 +145,18 @@ public class App {
         while( iter.hasNext() )
         {
             Map.Entry<String, Integer> entry = iter.next();
-            String k = (String) entry.getKey();
+            String k = entry.getKey();
             counts.put(k, counter );
             counter+=1;
         }
 
-        System.out.println(counts.toString());
+        System.out.println(counts);
 
         // now set the macno of the objects
         for(knn_methods item : listObj)
         {
             // get mac no of obj
-            String mac = item.MAC.toString();
+            String mac = item.MAC;
 
             // check the mac with unique macno
             if(counts.containsKey(mac))
@@ -249,13 +249,13 @@ public class App {
     }
 
 
-    public static void main(String[] args) throws Exception
+    public static void main(String[] args)
     {
 
         try
         {
             App mainObj = new App();
-            ArrayList<knn.knn_methods> kNN_Objs = new ArrayList<knn.knn_methods>();
+            ArrayList<knn_methods> kNN_Objs;
             Tuple<ArrayList<knn_methods> , Map> tup = mainObj.readJson();
             kNN_Objs = tup.getOne();
             Map macnos = tup.getTwo();
@@ -264,7 +264,7 @@ public class App {
             knn_methods test_obj = new knn_methods( "84:3d:c6:c7:ef:50",  -42);
 
             //set macno of test obj
-            if( macnos.containsKey( (String) test_obj.MAC )  )
+            if( macnos.containsKey( test_obj.MAC )  )
             {
                 test_obj.setMacNo( (Integer) macnos.get(test_obj.MAC) );
             }
