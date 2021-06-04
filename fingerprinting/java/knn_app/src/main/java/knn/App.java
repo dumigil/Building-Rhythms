@@ -15,8 +15,8 @@ import com.google.gson.*;
 public class App {
     static class Tuple<K, V>
     {
-        private final K one;
-        private final V two;
+        private K one;
+        private V two;
 
         public Tuple(K fir, V sec)
         {
@@ -30,6 +30,11 @@ public class App {
 
         public V getTwo() {
             return two;
+        }
+        public void setOneTwo(K one_, V two_)
+        {
+            this.one = one_;
+            this.two = two_;
         }
     }
 
@@ -173,7 +178,7 @@ public class App {
     }
 
 
-    public ArrayList<Double> getEuclideanDistance(ArrayList<knn.knn_methods> objList, knn_methods test_feat)
+    public String getEuclideanDistance(ArrayList<knn.knn_methods> objList, knn_methods test_feat)
     {
 
         // takes all knn objects and single test object, calculates distances
@@ -195,13 +200,60 @@ public class App {
         // distlist is same size as objlist, so labels can be extracted easily, just know the indices of the min k labels
 
         //maybe label but make a new function to give
-        majorityVoter(distList, objList, 10);
 
-        return distList;
+        return majorityVoter(distList, objList, 10);
+    }
+
+    public String classifier(ArrayList<String> labelsList)
+    {
+        // takes list of String labels and finds count of each
+        Map lablMap = new HashMap<String, Integer>();
+
+        for(String item : labelsList)
+        {
+            int count = (int) lablMap.getOrDefault(item, 0); // ensure count will be one of 0,1,2,3,...
+            lablMap.put(item, count + 1);
+
+        }// hash map is made
+
+
+        //use tuple to set label and max value
+        Iterator<Map.Entry<String, Integer>> iter =  lablMap.entrySet().iterator();
+        int max = Integer.MIN_VALUE;
+        Tuple t_max = new Tuple("lol_what_room_is_this", -10 );
+        while( iter.hasNext() )
+        {
+            Map.Entry<String, Integer> entry = iter.next();
+            // get key value
+            String k = entry.getKey();
+            Integer v = entry.getValue();
+            //store as tuple / update tuple tmax
+
+
+
+            System.out.println("k is: "+k +" and v is: "+  v);
+            if(max < (int) t_max.getTwo())
+            {
+                max = v;
+//                System.out.println("max is : "+ max);
+                // if the max value is defeated, then update max value and also the label with this value
+                // update tuple
+                t_max.setOneTwo(k, v);
+
+//                System.out.println("k_ is: "+ t_max.getOne() +" and v_ is: "+  t_max.getTwo());
+
+            } // this should give us the max value in the hashmap
+
+//            System.out.println(t_max.getOne());
+        }
+
+//        System.out.println("label counts dict is \n" + lablMap.toString());
+//        System.out.println("max label is: " + t_max.getOne());
+        return (String) t_max.getOne();
     }
 
 
-    public int[] majorityVoter(ArrayList<Double> distList, ArrayList<knn.knn_methods> objList ,int k)
+    public String majorityVoter(ArrayList<Double> distList, ArrayList<knn.knn_methods> objList ,int k)
     {
 
         int[] indices = new int[k];
@@ -233,21 +285,25 @@ public class App {
             {
                 minDist[maxIdx] = dist;
                 indices[maxIdx] = i;
+//
             }
         }
         System.out.println(Arrays.toString( minDist) );
         System.out.println(Arrays.toString( indices) );
         System.out.println(distList);
 
-        //check label of indices
+        // make list of labels and then send to label voter
+        ArrayList<String> labelsList = new ArrayList<>();
+
+        // check label of indices
         for (int i :indices)
         {
-            System.out.println( objList.get(i).label );
+            labelsList.add(objList.get(i).label);
+//            System.out.println( objList.get(i).label );
         }
-
-        return indices;
+        String feature_label =  classifier(labelsList);
+        return feature_label;
     }
-
 
     public static void main(String[] args)
     {
@@ -268,7 +324,7 @@ public class App {
             {
                 test_obj.setMacNo( (Integer) macnos.get(test_obj.MAC) );
             }
-            mainObj.getEuclideanDistance(kNN_Objs , test_obj);
+            System.out.println( mainObj.getEuclideanDistance(kNN_Objs , test_obj)  );
             System.out.println(test_obj.macno);
 
             //            System.out.println("mac no of 7th obj "+ kNN_Objs.get(7).MAC +" and macno is  " +kNN_Objs.get(10).macno);

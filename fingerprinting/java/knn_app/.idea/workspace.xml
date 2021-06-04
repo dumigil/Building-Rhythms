@@ -4,7 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e498766e-d425-477a-b0d9-99b23a7b3b2c" name="Default Changelist" comment="minor changes to reduce warnings">
+    <list default="true" id="e498766e-d425-477a-b0d9-99b23a7b3b2c" name="Default Changelist" comment="found a signal value in test feature to get different labels: noe to implement voting mechanism">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/classes/java/main/knn/App.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/knn/App.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/knn/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/knn/App.java" afterDir="false" />
     </list>
@@ -141,7 +142,14 @@
       <option name="project" value="LOCAL" />
       <updated>1622810607277</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="found a signal value in test feature to get different labels: noe to implement voting mechanism">
+      <created>1622811004500</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1622811004500</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -163,6 +171,7 @@
     <MESSAGE value="added unq maker to test feature , majority vote now gets the indices of k min distances in terms of knn_objects, yet to implement the majority of the labels found" />
     <MESSAGE value="added test feature to assign its macno, &#10;also prints indices of min knnObjects&#10;to implement: get majority vote" />
     <MESSAGE value="minor changes to reduce warnings" />
-    <option name="LAST_COMMIT_MESSAGE" value="minor changes to reduce warnings" />
+    <MESSAGE value="found a signal value in test feature to get different labels: noe to implement voting mechanism" />
+    <option name="LAST_COMMIT_MESSAGE" value="found a signal value in test feature to get different labels: noe to implement voting mechanism" />
   </component>
 </project>
