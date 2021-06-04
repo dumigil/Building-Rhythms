@@ -68,12 +68,36 @@ public class App {
 
             // CREATE A list for storing knn object methods
 
-            String wifiName = "eduroam";
+            String wifiName1 = "eduroam";
+            String wifiName2 = "TUvisitor";
+            String wifiName3 = "Delft Free Wifi";
+            String wifiName4 = "tudelft-dastud";
+
+            double currentTime = Double.parseDouble( String.valueOf(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())) );
+            int timeToPass = 60; // time in minutes
+            int timeToPassSeconds =timeToPass*60; // time in minutes
+
+            double timePast = currentTime - timeToPassSeconds;
+            System.out.println(currentTime);
+
             for (malakas.Features iter: feat_arr)
             {
+                double timeFromObject = Double.parseDouble( iter.attributes.Time_Stamp);
 
-                if(iter.attributes.BSSID.toString().equals(wifiName))
+                if(iter.attributes.BSSID.toString().equals(wifiName1) || iter.attributes.BSSID.toString().equals(wifiName2) || iter.attributes.BSSID.toString().equals(wifiName3) || iter.attributes.BSSID.toString().equals(wifiName4) )
                 {
+                    // if(timeFromObject >= timePast)
+                    // {
+                    //     String mac = iter.attributes.MAC;
+                    //     double signal = Double.parseDouble (iter.attributes.RSSI );
+                    //     double unqID  = Double.parseDouble( iter.attributes.ObjectId );
+                    //     String lbl = iter.attributes.Room_ID;
+
+                    //     double timestamp = Double.parseDouble(iter.attributes.Time_Stamp);
+
+                    //     knnObjList.add( new knn_methods(mac, signal, unqID, lbl));
+
+                    // }
                     String mac = iter.attributes.MAC;
                     double signal = Double.parseDouble (iter.attributes.RSSI );
                     double unqID  = Double.parseDouble( iter.attributes.ObjectId );
@@ -84,7 +108,10 @@ public class App {
             }
             unq = uniqueMaker(knnObjList);
 
-            System.out.println("we have so many "+ wifiName + " training wifi samples " +knnObjList.size());
+            System.out.println("we have so many "+ wifiName1 + " training wifi samples " +knnObjList.size());
+            System.out.println("we have so many "+ wifiName2 + " training wifi samples " +knnObjList.size());
+            System.out.println("we have so many "+ wifiName3 + " training wifi samples " +knnObjList.size());
+            System.out.println("we have so many "+ wifiName4 + " training wifi samples " +knnObjList.size());
 
         }
         catch (Exception e)
