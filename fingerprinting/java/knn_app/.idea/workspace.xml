@@ -4,8 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e498766e-d425-477a-b0d9-99b23a7b3b2c" name="Default Changelist" comment="added test feature to assign its macno, &#10;also prints indices of min knnObjects&#10;to implement: get majority vote">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="e498766e-d425-477a-b0d9-99b23a7b3b2c" name="Default Changelist" comment="minor changes to reduce warnings">
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/knn/App.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/knn/App.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/knn/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/knn/App.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -134,7 +134,14 @@
       <option name="project" value="LOCAL" />
       <updated>1622810283482</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="minor changes to reduce warnings">
+      <created>1622810607277</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1622810607277</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -155,6 +162,7 @@
     <MESSAGE value="added methods to make unique macno for every unique macID, improved eucledian dist, changed implementation to make unique maker on the go while loading knn objs" />
     <MESSAGE value="added unq maker to test feature , majority vote now gets the indices of k min distances in terms of knn_objects, yet to implement the majority of the labels found" />
     <MESSAGE value="added test feature to assign its macno, &#10;also prints indices of min knnObjects&#10;to implement: get majority vote" />
-    <option name="LAST_COMMIT_MESSAGE" value="added test feature to assign its macno, &#10;also prints indices of min knnObjects&#10;to implement: get majority vote" />
+    <MESSAGE value="minor changes to reduce warnings" />
+    <option name="LAST_COMMIT_MESSAGE" value="minor changes to reduce warnings" />
   </component>
 </project>

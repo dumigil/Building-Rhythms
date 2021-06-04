@@ -261,7 +261,7 @@ public class App {
             Map macnos = tup.getTwo();
 
             // make test object for testing
-            knn_methods test_obj = new knn_methods( "84:3d:c6:c7:ef:50",  -42);
+            knn_methods test_obj = new knn_methods( "84:3d:c6:c7:ef:50",  -90);
 
             //set macno of test obj
             if( macnos.containsKey( test_obj.MAC )  )
