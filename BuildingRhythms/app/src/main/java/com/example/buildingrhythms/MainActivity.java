@@ -223,7 +223,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                     else
                     {
-                        System.out.println("ran into the else statement");
+                        System.out.println("had 0 test objects");
                     }
 
                     System.out.println("\n\n MY STRING \n\n");
