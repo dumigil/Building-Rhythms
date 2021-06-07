@@ -96,7 +96,6 @@ import javax.net.ssl.HttpsURLConnection;
 
 
 
-
 public class MainActivity extends AppCompatActivity {
 
 
@@ -211,24 +210,28 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     //System.out.println(resultList);
-                    System.out.println("there are test features: "+ testKnnObjList.size() );
+                    Toast.makeText(MainActivity.this,"there are test features: "+ testKnnObjList.size(), Toast.LENGTH_SHORT ).show();
 
                     if(testKnnObjList.size() >0)
                     {
                         try {
-                            System.out.println("You, Human, are in room: " + kNNObj.knn_test_features(testKnnObjList));
+                            Toast.makeText(MainActivity.this,"You, Human, are in room: " + kNNObj.knn_test_features(testKnnObjList), Toast.LENGTH_SHORT).show();
+                            previousRoom = currentRoom;
+                            currentRoom = kNNObj.knn_test_features(testKnnObjList);
+                            if (previousRoom != null) {
+                                updateOccupancy(previousRoom, -1);
+                            }
+                            updateOccupancy(currentRoom, 1);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
                     else
                     {
-                        System.out.println("had 0 test objects");
+                        Toast.makeText(MainActivity.this,"had 0 test objects", Toast.LENGTH_LONG).show();
                     }
 
-                    System.out.println("\n\n MY STRING \n\n");
 
-                    //updateOccupancy("08.02.00.760",1);
 
                 }
             }
@@ -288,8 +291,8 @@ public class MainActivity extends AppCompatActivity {
                 String objectID = iter.attributes.OBJECTID;
                 currOBJECTID = objectID;
                 roomOccupancy = currOcc;
-                System.out.println("There are " + currOcc +" people in room "+mRoom+" with objectID "+objectID);
-                Toast.makeText(MainActivity.this,"You are in room "+mRoom+". There are "+currOcc+" people in the room with you",Toast.LENGTH_SHORT).show();
+                //System.out.println("There are " + currOcc +" people in room "+mRoom+" with objectID "+objectID);
+                //Toast.makeText(MainActivity.this,"You are in room "+mRoom+". There are "+currOcc+" people in the room with you",Toast.LENGTH_SHORT).show();
 
             }
 
