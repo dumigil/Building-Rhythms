@@ -1,4 +1,4 @@
-package knn;
+package com.example.buildingrhythms;
 
 public class malakas
 {

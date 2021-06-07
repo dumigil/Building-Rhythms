@@ -5,12 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
-import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -21,12 +19,15 @@ class WifiReceiver extends BroadcastReceiver {
     WifiManager wifiManager;
     StringBuilder sb;
     public JSONObject wifiResultList = new JSONObject();
-
+    public ArrayList<knn_methods> knn_test_objs  = new ArrayList<>();
     ListView wifiDeviceList;
+
     public WifiReceiver(WifiManager wifiManager, ListView wifiDeviceList) {
         this.wifiManager = wifiManager;
         this.wifiDeviceList = wifiDeviceList;
     }
+
+
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
         if (WifiManager.SCAN_RESULTS_AVAILABLE_ACTION.equals(action)) {
@@ -42,6 +43,20 @@ class WifiReceiver extends BroadcastReceiver {
                     currResult.put("MAC", scanResult.BSSID);
                     currResult.put("RSSI", scanResult.level);
                     wifiResultList.put("attributes", currResult);
+                    // make knn_methods object here itself
+
+                    String wifiName1 = "eduroam";
+                    String wifiName2 = "TUvisitor";
+                    String wifiName3 = "Delft Free Wifi";
+                    String wifiName4 = "tudelft-dastud";
+
+                    if(scanResult.SSID.equals(wifiName1) || scanResult.SSID.equals(wifiName2) || scanResult.SSID.equals(wifiName3) || scanResult.SSID.equals(wifiName4) )
+                    {
+                        knn_methods knnObj = new knn_methods(scanResult.BSSID, Double.parseDouble( String.valueOf(scanResult.level)) );
+                        knn_test_objs.add(knnObj);
+                    }
+
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -53,7 +68,13 @@ class WifiReceiver extends BroadcastReceiver {
         }
     }
 
-    public JSONObject getWifiResultList() {
+    public JSONObject getWifiResultList()
+    {
         return wifiResultList;
+    }
+
+    public ArrayList<knn_methods> getKnn_test_objs()
+    {
+        return knn_test_objs;
     }
 }

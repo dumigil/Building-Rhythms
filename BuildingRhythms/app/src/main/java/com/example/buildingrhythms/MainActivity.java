@@ -34,6 +34,7 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+
 import com.esri.arcgisruntime.concurrent.ListenableFuture;
 import com.esri.arcgisruntime.data.ArcGISFeature;
 import com.esri.arcgisruntime.data.Feature;
@@ -74,6 +75,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -105,8 +107,10 @@ public class MainActivity extends AppCompatActivity {
     private final int MY_PERMISSIONS_ACCESS_COARSE_LOCATION = 1;
     private List<ScanResult> results;
     WifiReceiver receiverWifi;
+
     private boolean withExtrusion = true;
     public ArrayList<JSONObject> resultList = new ArrayList<>();
+    public ArrayList<knn_methods> testKnnObjList = new ArrayList<>();
     private ArrayList<String> arrayList = new ArrayList<>();
     private ArrayAdapter adapter;
 
@@ -115,8 +119,20 @@ public class MainActivity extends AppCompatActivity {
     public int  roomOccupancy;
     public String currOBJECTID;
 
+    public knnApp kNNObj = new knnApp();
+
+    public ArrayList<knn_methods> arrayAppend( ArrayList<knn_methods> A , ArrayList<knn_methods> B)
+    {
+        for(knn_methods item: B)
+        {
+            A.add(item);
+        }
+        return A;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
@@ -175,7 +191,8 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Turning WiFi ON...", Toast.LENGTH_LONG).show();
             wifiManager.setWifiEnabled(true);
         }
-        buttonScan.setOnClickListener(new View.OnClickListener() {
+        buttonScan.setOnClickListener(new View.OnClickListener()
+        {
             @Override
             public void onClick(View v) {
                 if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION)
@@ -183,19 +200,40 @@ public class MainActivity extends AppCompatActivity {
                     ActivityCompat.requestPermissions(
                             MainActivity.this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, MY_PERMISSIONS_ACCESS_COARSE_LOCATION);
                 } else {
+                    testKnnObjList.clear();
                     for(int i =0; i<=30; i++){
                         wifiManager.startScan();
                         //System.out.println(receiverWifi.wifiResultList.getClass().getSimpleName());
                         JSONObject js = receiverWifi.getWifiResultList();
+                        ArrayList<knn_methods> tempTestObjList = receiverWifi.getKnn_test_objs() ;
+                        testKnnObjList = arrayAppend(testKnnObjList , tempTestObjList);
                         resultList.add(js);
                     }
-                    System.out.println(resultList);
+
+                    //System.out.println(resultList);
+                    System.out.println("there are test features: "+ testKnnObjList.size() );
+
+                    if(testKnnObjList.size() >0)
+                    {
+                        try {
+                            System.out.println("You, Human, are in room: " + kNNObj.knn_test_features(testKnnObjList));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    else
+                    {
+                        System.out.println("ran into the else statement");
+                    }
+
+                    System.out.println("\n\n MY STRING \n\n");
+
                     //updateOccupancy("08.02.00.760",1);
 
                 }
             }
         });
-    }
+    } // end of onCreate
 
     @Override
     protected void onPostResume() {
@@ -241,18 +279,25 @@ public class MainActivity extends AppCompatActivity {
             indoorModel.Features[] feat_arr = value.features;
 
             System.out.println("There are so many features: \t"+ feat_arr.length);
-            for (indoorModel.Features iter: feat_arr){
+
+            for (indoorModel.Features iter: feat_arr)
+            {
+
                 String mRoom = iter.attributes.NAME;
                 int currOcc = iter.attributes.OCCUPANCY;
                 String objectID = iter.attributes.OBJECTID;
                 currOBJECTID = objectID;
                 roomOccupancy = currOcc;
                 System.out.println("There are " + currOcc +" people in room "+mRoom+" with objectID "+objectID);
-                Toast.makeText(MainActivity.this,"You are in room "+mRoom+". There are "+currOcc+" people in the room with you",Toast.LENGTH_SHORT).show()
-;
+                Toast.makeText(MainActivity.this,"You are in room "+mRoom+". There are "+currOcc+" people in the room with you",Toast.LENGTH_SHORT).show();
+
             }
+
             request.disconnect();
-        } catch (Exception e) {
+        }
+
+        catch (Exception e)
+        {
             e.printStackTrace();
         }
 
