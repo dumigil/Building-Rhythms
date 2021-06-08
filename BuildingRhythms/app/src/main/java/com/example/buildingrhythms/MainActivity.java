@@ -183,9 +183,9 @@ public class MainActivity extends AppCompatActivity {
                 "http://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer");
         scene.getBaseSurface().getElevationSources().add(elevationSource);
 
-        Camera camera = new Camera(52.0063728, 4.3710473, 200.0, 0.00, 0.0, 0.0);
+        Camera camera = new Camera(52.0048404,4.3696593, 150, 30, 50, 0.0);
         mSceneView.setViewpointCamera(camera);
-
+        mSceneView.setFieldOfView(15);
 
         wifiList = findViewById(R.id.wifiList);
         Button buttonScan = findViewById(R.id.scanBtn);
