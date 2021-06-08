@@ -11,17 +11,22 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.Point;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.provider.ContactsContract;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -43,20 +48,28 @@ import com.esri.arcgisruntime.data.QueryParameters;
 import com.esri.arcgisruntime.data.ServiceFeatureTable;
 import com.esri.arcgisruntime.geometry.Envelope;
 import com.esri.arcgisruntime.layers.FeatureLayer;
+import com.esri.arcgisruntime.loadable.LoadStatus;
 import com.esri.arcgisruntime.mapping.ArcGISScene;
 import com.esri.arcgisruntime.layers.ArcGISSceneLayer;
 import com.esri.arcgisruntime.ArcGISRuntimeEnvironment;
 
 import com.esri.arcgisruntime.mapping.ArcGISTiledElevationSource;
 import com.esri.arcgisruntime.mapping.Basemap;
+import com.esri.arcgisruntime.mapping.BasemapStyle;
+import com.esri.arcgisruntime.mapping.GeoElement;
 import com.esri.arcgisruntime.mapping.TimeExtent;
+import com.esri.arcgisruntime.mapping.view.Callout;
 import com.esri.arcgisruntime.mapping.view.Camera;
+import com.esri.arcgisruntime.mapping.view.DefaultSceneViewOnTouchListener;
+import com.esri.arcgisruntime.mapping.view.IdentifyLayerResult;
 import com.esri.arcgisruntime.mapping.view.LayerSceneProperties;
 import com.esri.arcgisruntime.mapping.view.SceneView;
+import com.esri.arcgisruntime.symbology.ClassBreaksRenderer;
 import com.esri.arcgisruntime.symbology.Renderer;
 import com.esri.arcgisruntime.symbology.SimpleFillSymbol;
 import com.esri.arcgisruntime.symbology.SimpleLineSymbol;
 import com.esri.arcgisruntime.symbology.SimpleRenderer;
+import com.esri.arcgisruntime.symbology.UniqueValueRenderer;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONArray;
@@ -88,7 +101,10 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
 
 import com.google.gson.*;
 
@@ -117,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
     public String previousRoom;
     public int  roomOccupancy;
     public String currOBJECTID;
-
+    private Callout mCallout;
     public knnApp kNNObj = new knnApp();
 
     public ArrayList<knn_methods> arrayAppend( ArrayList<knn_methods> A , ArrayList<knn_methods> B)
@@ -140,7 +156,8 @@ public class MainActivity extends AppCompatActivity {
         ArcGISRuntimeEnvironment.setApiKey(keys.api_key_02062021);
 
         ArcGISScene scene = new ArcGISScene();
-        scene.setBasemap(Basemap.createOpenStreetMap());
+        Basemap basemap = new Basemap(BasemapStyle.OSM_LIGHT_GRAY_BASE);
+        scene.setBasemap(Basemap.createStreetsWithReliefVector());
 
         mSceneView = (SceneView) findViewById(R.id.sceneView);
         mSceneView.setScene(scene);
@@ -154,32 +171,19 @@ public class MainActivity extends AppCompatActivity {
         unitLayer.setMinScale(0);
         unitLayer.setMaxScale(0);
 
+
+        final ClassBreaksRenderer classBreaksRenderer = createPopulationClassBreaksRenderer();
+        classBreaksRenderer.getSceneProperties().setExtrusionMode(Renderer.SceneProperties.ExtrusionMode.ABSOLUTE_HEIGHT);
+        classBreaksRenderer.getSceneProperties().setExtrusionExpression("[HEIGHT_RELATIVE] + [ELEVATION_RELATIVE]");
+
+        unitLayer.setRenderer(classBreaksRenderer);
+
         scene.getOperationalLayers().add(unitLayer);
-
-        ServiceFeatureTable serviceFeatureTableBK = new ServiceFeatureTable("https://services3.arcgis.com/jR9a3QtlDyTstZiO/arcgis/rest/services/BK_MAP_INDOOR_WFL1/FeatureServer/3");
-        serviceFeatureTableBK.setFeatureRequestMode(ServiceFeatureTable.FeatureRequestMode.ON_INTERACTION_NO_CACHE);
-        FeatureLayer featureLayer = new FeatureLayer(serviceFeatureTableBK);
-        ServiceFeatureTable serviceFeatureTableArduino = new ServiceFeatureTable("https://services3.arcgis.com/jR9a3QtlDyTstZiO/ArcGIS/rest/services/Arduino_Table/FeatureServer/0");
-
-        //serviceFeatureTableArduino.(ServiceFeatureTable.QueryFeatureFields.valueOf(""));
-        featureLayer.getSceneProperties().setSurfacePlacement(LayerSceneProperties.SurfacePlacement.RELATIVE);
-        featureLayer.setRenderingMode(FeatureLayer.RenderingMode.DYNAMIC);
-        featureLayer.setMinScale(0);
-        featureLayer.setMaxScale(0);
-
-        SimpleLineSymbol lineSymbol = new SimpleLineSymbol(SimpleLineSymbol.Style.SOLID, 0x80964B00, 1.5F);
-        SimpleRenderer renderer = new SimpleRenderer(new SimpleFillSymbol(SimpleFillSymbol.Style.SOLID, 0xFFFFEDCC, lineSymbol));
-
-        renderer.getSceneProperties().setExtrusionMode(Renderer.SceneProperties.ExtrusionMode.ABSOLUTE_HEIGHT);
-
-        featureLayer.setRenderer(renderer);
-
-        scene.getOperationalLayers().add(featureLayer);
         ArcGISTiledElevationSource elevationSource = new ArcGISTiledElevationSource(
                 "http://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer");
         scene.getBaseSurface().getElevationSources().add(elevationSource);
 
-        Camera camera = new Camera(52.0063728, 4.3710473, 300.0, 0.00, 0.00, 0.0);
+        Camera camera = new Camera(52.0063728, 4.3710473, 200.0, 0.00, 0.0, 0.0);
         mSceneView.setViewpointCamera(camera);
 
 
@@ -190,6 +194,64 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Turning WiFi ON...", Toast.LENGTH_LONG).show();
             wifiManager.setWifiEnabled(true);
         }
+        unitLayer.addDoneLoadingListener(() -> {
+            if (unitLayer.getLoadStatus() == LoadStatus.LOADED){
+                mSceneView.setOnTouchListener(new DefaultSceneViewOnTouchListener(mSceneView){
+                    @Override public boolean onSingleTapConfirmed(MotionEvent motionEvent) {
+                        Log.d("CLICK", "WE HAVE A TAP");
+                        unitLayer.clearSelection();
+                        android.graphics.Point screenPoint = new android.graphics.Point(Math.round(motionEvent.getX()),Math.round(motionEvent.getY()));
+                        ListenableFuture<IdentifyLayerResult> identify = mSceneView
+                                .identifyLayerAsync(unitLayer, screenPoint, 10, false, 1);
+                        identify.addDoneListener(() -> {
+                            try {
+                                // get the identified result and check that it is a feature
+                                IdentifyLayerResult result = identify.get();
+                                List<GeoElement> geoElements = result.getElements();
+                                if (!geoElements.isEmpty()) {
+                                    Log.d("EMPTY", "geoelement not empty");
+                                    //GeoElement geoElement = geoElements.get(0);
+                                    for(GeoElement element : result.getElements()){
+                                        Feature feature = (Feature) element;
+                                        unitLayer.selectFeature((Feature) feature);
+                                        Map<String, Object> attr = feature.getAttributes();
+                                        Set<String> keys = attr.keySet();
+                                        for(String key : keys) {
+
+                                            Object value = attr.get(key);
+                                            //Toast.makeText(MainActivity.this, key+" | "+value, Toast.LENGTH_LONG).show();
+                                            //Log.d("MainActivity",key);
+                                            if(key.equals("OCCUPANCY")){
+                                                Toast.makeText(MainActivity.this, "Occupancy: "+value, Toast.LENGTH_LONG).show();
+                                            }
+
+
+
+                                        }
+                                    }
+
+                                    // select the feature
+
+
+
+                                }
+                            } catch (InterruptedException | ExecutionException e) {
+                                String error = "Error while identifying layer result: " + e.getMessage();
+                                Log.e("ERROR", error);
+                                Toast.makeText(MainActivity.this, error, Toast.LENGTH_LONG).show();
+                            }
+                        });
+                        return true;
+                    }
+                });
+            } else if (unitLayer.getLoadStatus() == LoadStatus.FAILED_TO_LOAD) {
+                String error = "Error loading scene layer " + unitLayer.getLoadStatus();
+                Log.e("ERROR", error);
+                Toast.makeText(this, error, Toast.LENGTH_LONG).show();
+
+            }
+        });
+
         buttonScan.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -202,14 +264,12 @@ public class MainActivity extends AppCompatActivity {
                     testKnnObjList.clear();
                     for(int i =0; i<=30; i++){
                         wifiManager.startScan();
-                        //System.out.println(receiverWifi.wifiResultList.getClass().getSimpleName());
                         JSONObject js = receiverWifi.getWifiResultList();
                         ArrayList<knn_methods> tempTestObjList = receiverWifi.getKnn_test_objs() ;
                         testKnnObjList = arrayAppend(testKnnObjList , tempTestObjList);
                         resultList.add(js);
                     }
 
-                    //System.out.println(resultList);
                     Toast.makeText(MainActivity.this,"there are test features: "+ testKnnObjList.size(), Toast.LENGTH_SHORT ).show();
 
                     if(testKnnObjList.size() >0)
@@ -236,6 +296,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
     } // end of onCreate
 
     @Override
@@ -443,4 +504,50 @@ public class MainActivity extends AppCompatActivity {
         cal.setTime(date);
         return cal;
     }
+
+    private static ClassBreaksRenderer createPopulationClassBreaksRenderer() {
+
+        // create colors
+        final int gray  = Color.rgb(153, 153, 153);
+        final int blue1 = Color.argb(150,255, 236, 204 );
+        final int blue2 = Color.argb(150,253, 194, 149);
+        final int blue3 = Color.argb(150,240, 125, 132);
+        final int blue4 = Color.argb(150,195, 94, 131);
+        final int blue5 = Color.argb(150,120, 73, 109);
+        final int blue6 = Color.argb(150,61, 49, 87);
+
+        // create 5 fill symbols with different shades of blue and a gray outline
+        SimpleLineSymbol outline = new SimpleLineSymbol(SimpleLineSymbol.Style.SOLID, gray, 1);
+        SimpleLineSymbol outline1 = new SimpleLineSymbol(SimpleLineSymbol.Style.SOLID, blue1, 1);
+        SimpleLineSymbol outline2= new SimpleLineSymbol(SimpleLineSymbol.Style.SOLID, blue2, 1);
+        SimpleLineSymbol outline3 = new SimpleLineSymbol(SimpleLineSymbol.Style.SOLID, blue3, 1);
+        SimpleLineSymbol outline4 = new SimpleLineSymbol(SimpleLineSymbol.Style.SOLID, blue4, 1);
+        SimpleLineSymbol outline5 = new SimpleLineSymbol(SimpleLineSymbol.Style.SOLID, blue5, 1);
+        SimpleLineSymbol outline6 = new SimpleLineSymbol(SimpleLineSymbol.Style.SOLID, blue6, 1);
+
+        SimpleFillSymbol classSymbol1 = new SimpleFillSymbol(SimpleFillSymbol.Style.SOLID, blue1, outline1);
+        SimpleFillSymbol classSymbol2 = new SimpleFillSymbol(SimpleFillSymbol.Style.SOLID, blue2, outline2);
+        SimpleFillSymbol classSymbol3 = new SimpleFillSymbol(SimpleFillSymbol.Style.SOLID, blue3, outline3);
+        SimpleFillSymbol classSymbol4 = new SimpleFillSymbol(SimpleFillSymbol.Style.SOLID, blue4, outline4);
+        SimpleFillSymbol classSymbol5 = new SimpleFillSymbol(SimpleFillSymbol.Style.SOLID, blue5, outline5);
+        SimpleFillSymbol classSymbol6 = new SimpleFillSymbol(SimpleFillSymbol.Style.SOLID, blue6, outline6);
+
+        // create 5 classes for different population ranges
+        ClassBreaksRenderer.ClassBreak classBreak1 = new ClassBreaksRenderer.ClassBreak("-99 to 8560", "-99 to 8560", -1,
+                3, classSymbol1);
+        ClassBreaksRenderer.ClassBreak classBreak2 = new ClassBreaksRenderer.ClassBreak("> 8,560 to 18,109", "> 8,560 to 18,109", 2,
+                4, classSymbol2);
+        ClassBreaksRenderer.ClassBreak classBreak3 = new ClassBreaksRenderer.ClassBreak("> 18,109 to 35,501", "> 18,109 to 35,501", 4,
+                6, classSymbol3);
+        ClassBreaksRenderer.ClassBreak classBreak4 = new ClassBreaksRenderer.ClassBreak("> 35,501 to 86,100", "> 35,501 to 86,100", 6,
+                8, classSymbol4);
+        ClassBreaksRenderer.ClassBreak classBreak5 = new ClassBreaksRenderer.ClassBreak("> 0.9 to 1", "> 86,100 to 10,110,975", 8,
+                10, classSymbol5);
+        ClassBreaksRenderer.ClassBreak classBreak6 = new ClassBreaksRenderer.ClassBreak("> 0.9 to 1", "> 86,100 to 10,110,975", 10,
+                30, classSymbol5);
+        // create the renderer for the POP2007 field
+        return new ClassBreaksRenderer("OCCUPANCY", Arrays.asList(classBreak1, classBreak2, classBreak3, classBreak4,
+                classBreak5, classBreak6));
+    }
+
 }
