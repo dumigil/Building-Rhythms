@@ -47,6 +47,7 @@ public class knnApp {
     {
         // local var to be returned
         ArrayList<knn_methods> knnObjList = new ArrayList<>();
+        knnObjList.clear();
         Map unq = new HashMap();
         try
         {
@@ -70,7 +71,7 @@ public class knnApp {
             //reading values for last instance
             malakas.Features[] feat_arr = value.features;
             System.out.println( "There are so many features: \t" +  feat_arr.length );
-
+            request.getInputStream().close();
             // CREATE A list for storing knn object methods
 
             String wifiName1 = "eduroam";
@@ -359,17 +360,18 @@ public class knnApp {
             if( macnos.containsKey( testerObj.MAC ) )
             {
                 testerObj.setMacNo((Integer) macnos.get(testerObj.MAC));
-            }
-            else
-            {
-                // set the macno to get large distance from the others, so set as max value of int
-                testerObj.setMacNo( Integer.MAX_VALUE );
-            }
-
-            //get label and update label in object
             String lbl = getEuclideanDistance(trainingObjList , testerObj);
             testerObj.label = lbl;
             testLblList.add(lbl) ;
+            }
+//            else
+//            {
+//                // set the macno to get large distance from the others, so set as max value of int
+////                testerObj.setMacNo( Integer.MAX_VALUE );
+//                //or not consider this value
+//            }
+
+            //get label and update label in object
         }
 
         String finLabel = classifier(testLblList);

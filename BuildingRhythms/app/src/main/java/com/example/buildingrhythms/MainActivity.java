@@ -125,7 +125,6 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean withExtrusion = true;
     public ArrayList<JSONObject> resultList = new ArrayList<>();
-    public ArrayList<knn_methods> testKnnObjList = new ArrayList<>();
     private ArrayList<String> arrayList = new ArrayList<>();
     private ArrayAdapter adapter;
 
@@ -133,7 +132,6 @@ public class MainActivity extends AppCompatActivity {
     public String previousRoom;
     public int  roomOccupancy;
     public String currOBJECTID;
-    private Callout mCallout;
     public knnApp kNNObj = new knnApp();
 
     public ArrayList<knn_methods> arrayAppend( ArrayList<knn_methods> A , ArrayList<knn_methods> B)
@@ -249,19 +247,27 @@ public class MainActivity extends AppCompatActivity {
                     ActivityCompat.requestPermissions(
                             MainActivity.this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, MY_PERMISSIONS_ACCESS_COARSE_LOCATION);
                 } else {
+                    ArrayList<knn_methods> testKnnObjList = new ArrayList<>();
+
                     testKnnObjList.clear();
-                    for(int i =0; i<=30; i++){
-                        wifiManager.startScan();
-                        JSONObject js = receiverWifi.getWifiResultList();
-                        ArrayList<knn_methods> tempTestObjList = receiverWifi.getKnn_test_objs() ;
-                        testKnnObjList = arrayAppend(testKnnObjList , tempTestObjList);
-                        resultList.add(js);
+
+                    wifiManager.startScan();
+                    JSONObject js = receiverWifi.getWifiResultList();
+                    ArrayList<knn_methods> tempTestObjList = receiverWifi.getKnn_test_objs() ;
+                    testKnnObjList = arrayAppend(testKnnObjList , tempTestObjList);
+                    resultList.add(js);
+
+                    System.out.println("The sie of the list is: "+testKnnObjList.size());
+                    for(knn_methods e : testKnnObjList){
+                        System.out.println(e.MAC);
+                        System.out.println(e.RSSI);
                     }
                     Toast.makeText(MainActivity.this,"there are test features: "+ testKnnObjList.size(), Toast.LENGTH_SHORT ).show();
                     if(testKnnObjList.size() >0)
                     {
                         try {
                             Toast.makeText(MainActivity.this,"You, Human, are in room: " + kNNObj.knn_test_features(testKnnObjList), Toast.LENGTH_SHORT).show();
+                            System.out.println("You, Human, are in room: "+kNNObj.knn_test_features(testKnnObjList));
                             previousRoom = currentRoom;
                             currentRoom = kNNObj.knn_test_features(testKnnObjList);
                             if (previousRoom != null) {
@@ -527,7 +533,7 @@ public class MainActivity extends AppCompatActivity {
         ClassBreaksRenderer.ClassBreak classBreak5 = new ClassBreaksRenderer.ClassBreak("> 0.9 to 1", "> 86,100 to 10,110,975", 8,
                 10, classSymbol5);
         ClassBreaksRenderer.ClassBreak classBreak6 = new ClassBreaksRenderer.ClassBreak("> 0.9 to 1", "> 86,100 to 10,110,975", 10,
-                30, classSymbol5);
+                60, classSymbol5);
         // create the renderer for the POP2007 field
         return new ClassBreaksRenderer("OCCUPANCY", Arrays.asList(classBreak1, classBreak2, classBreak3, classBreak4,
                 classBreak5, classBreak6));
