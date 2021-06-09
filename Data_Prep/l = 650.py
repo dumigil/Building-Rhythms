@@ -1,3 +1,3 @@
 with open("index.txt", 'w') as fh:
-    for e in range(6623):
+    for e in range(15000):
         fh.write(str(e)+ "," )
