@@ -11,7 +11,7 @@ const char route[] PROGMEM= "/jR9a3QtlDyTstZiO/ArcGIS/rest/services/Arduino_Tabl
 
 RTCZero rtc;
 const byte seconds = 0;
-const byte minutes = 31;
+const byte minutes = 52;
 const byte hours = 13;
 
 /* Change these values to set the current initial date */
@@ -35,8 +35,8 @@ void setup() {
   rtc.setDate(day, month, year);
   // while you're not connected to a WiFi AP,
   while ( WiFi.status() != WL_CONNECTED) {
-    Serial.print("Attempting to connect to Network named: ");
-    Serial.println(SECRET_SSID);
+    //Serial.print("Attempting to connect to Network named: ");
+    //Serial.println(SECRET_SSID);
 
     //at home
     WiFi.begin(SECRET_SSID, SECRET_PASS);
@@ -53,7 +53,7 @@ void setup() {
 void loop() {
   WiFi.end();
   String dummyData = listNetworks();
-  Serial.println("Wifi scan complete, starting eduroam timeout");
+  //Serial.println("Wifi scan complete, starting eduroam timeout");
   WiFi.end();
   delay(1000);
   while ( WiFi.status() != WL_CONNECTED) {
@@ -68,7 +68,7 @@ void loop() {
   }
   
   if (millis() - lastRequest > interval ) {
-    Serial.println("making request");
+    //Serial.println("making request");
     //http.get(getRoute);  // make a GET request
     String contentType = "application/x-www-form-urlencoded";
     http.post(route, contentType, dummyData);
@@ -84,13 +84,13 @@ void loop() {
     lastRequest = millis();
 
   }
-  //Serial.println(freeMemory());
+  Serial.println(freeMemory());
   
 }
 
 String listNetworks() {
   String dataString = "";
-  const char room []PROGMEM= "Oost_Serre";
+  const char room []PROGMEM= "08.02.00.560";
   int numSsid = WiFi.scanNetworks();
   if (numSsid == -1)
   {
