@@ -217,23 +217,12 @@ public class MainActivity extends AppCompatActivity {
                                         Map<String, Object> attr = feature.getAttributes();
                                         Set<String> keys = attr.keySet();
                                         for(String key : keys) {
-
                                             Object value = attr.get(key);
-                                            //Toast.makeText(MainActivity.this, key+" | "+value, Toast.LENGTH_LONG).show();
-                                            //Log.d("MainActivity",key);
                                             if(key.equals("OCCUPANCY")){
                                                 Toast.makeText(MainActivity.this, "Occupancy: "+value, Toast.LENGTH_LONG).show();
                                             }
-
-
-
                                         }
                                     }
-
-                                    // select the feature
-
-
-
                                 }
                             } catch (InterruptedException | ExecutionException e) {
                                 String error = "Error while identifying layer result: " + e.getMessage();
@@ -251,7 +240,6 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-
         buttonScan.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -269,9 +257,7 @@ public class MainActivity extends AppCompatActivity {
                         testKnnObjList = arrayAppend(testKnnObjList , tempTestObjList);
                         resultList.add(js);
                     }
-
                     Toast.makeText(MainActivity.this,"there are test features: "+ testKnnObjList.size(), Toast.LENGTH_SHORT ).show();
-
                     if(testKnnObjList.size() >0)
                     {
                         try {
@@ -290,9 +276,6 @@ public class MainActivity extends AppCompatActivity {
                     {
                         Toast.makeText(MainActivity.this,"had 0 test objects", Toast.LENGTH_LONG).show();
                     }
-
-
-
                 }
             }
         });
