@@ -517,8 +517,8 @@ public class MainActivity extends AppCompatActivity {
 
         // create 5 classes for different population ranges
         ClassBreaksRenderer.ClassBreak classBreak1 = new ClassBreaksRenderer.ClassBreak("-99 to 8560", "-99 to 8560", -1,
-                3, classSymbol1);
-        ClassBreaksRenderer.ClassBreak classBreak2 = new ClassBreaksRenderer.ClassBreak("> 8,560 to 18,109", "> 8,560 to 18,109", 2,
+                0, classSymbol1);
+        ClassBreaksRenderer.ClassBreak classBreak2 = new ClassBreaksRenderer.ClassBreak("> 8,560 to 18,109", "> 8,560 to 18,109", 1,
                 4, classSymbol2);
         ClassBreaksRenderer.ClassBreak classBreak3 = new ClassBreaksRenderer.ClassBreak("> 18,109 to 35,501", "> 18,109 to 35,501", 4,
                 6, classSymbol3);
