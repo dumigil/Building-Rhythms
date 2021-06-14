@@ -217,6 +217,7 @@ public class MainActivity extends AppCompatActivity {
         {
             @Override
             public void onClick(View v) {
+                final String[] input = {""};
                 if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
                     ActivityCompat.requestPermissions(
@@ -228,10 +229,7 @@ public class MainActivity extends AppCompatActivity {
                             boolean success = intent.getBooleanExtra(
                                     WifiManager.EXTRA_RESULTS_UPDATED, false);
                             if (success) {
-                                for(int i =0; i < 10; i++){
-                                    scanSuccess();
-                                }
-                                System.out.println(resultList);
+                                input[0] = scanSuccess();
                             } else {
                                 // scan failure handling
                                 scanFailure();
@@ -243,19 +241,14 @@ public class MainActivity extends AppCompatActivity {
                     boolean success = wifiManager.startScan();
                     if (!success) {
                         scanFailure();
+                    }else{
+                        input[0] = scanSuccess();
                     }
-                    String input = "[";
-                    String comma = "";
-                    for(String e: resultList){
-                        input += comma;
-                        input += e;
-                        comma = ",\n";
-                    }
-                    input +="]";
-                    System.out.println(input);
-                    if(!input.equals("[]")){
+
+                    System.out.println(input[0]);
+                    if(!input[0].equals("[]")){
                         Log.d("PY","Starting python run");
-                        PyObject obj = pyobj.callAttr("predict_func",input);
+                        PyObject obj = pyobj.callAttr("predict_func", input[0]);
                         Log.d("PY","Python run done");
 
                         System.out.println(obj.toString());
@@ -307,8 +300,9 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    private void scanSuccess() {
-        List<ScanResult> results = wifiManager.getScanResults();
+    private String scanSuccess() {
+        List<ScanResult> results = null;
+        results = wifiManager.getScanResults();
         for(ScanResult res: results){
             //System.out.println(res.BSSID+": "+res.level);
             JSONObject feature = new JSONObject();
@@ -323,6 +317,16 @@ public class MainActivity extends AppCompatActivity {
             }
 
         }
+        String input = "[";
+        String comma = "";
+        System.out.println(resultList.size());
+        for(String e: resultList){
+            input += comma;
+            input += e;
+            comma = ",\n";
+        }
+        input +="]";
+        return input;
 
     }
 
