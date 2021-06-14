@@ -6,6 +6,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.accessibilityservice.AccessibilityService;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -116,13 +117,12 @@ public class MainActivity extends AppCompatActivity {
 
 
     private SceneView mSceneView;
-    WifiManager wifiManager;
     private ListView wifiList;
     private Button buttonScan;
     private final int MY_PERMISSIONS_ACCESS_COARSE_LOCATION = 1;
     private List<ScanResult> results;
-    WifiReceiver receiverWifi;
 
+    WifiManager wifiManager;
     private boolean withExtrusion = true;
     public ArrayList<JSONObject> resultList = new ArrayList<>();
     private ArrayList<String> arrayList = new ArrayList<>();
@@ -192,6 +192,9 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Turning WiFi ON...", Toast.LENGTH_LONG).show();
             wifiManager.setWifiEnabled(true);
         }
+
+
+
         unitLayer.addDoneLoadingListener(() -> {
             if (unitLayer.getLoadStatus() == LoadStatus.LOADED){
                 mSceneView.setOnTouchListener(new DefaultSceneViewOnTouchListener(mSceneView){
@@ -247,21 +250,44 @@ public class MainActivity extends AppCompatActivity {
                     ActivityCompat.requestPermissions(
                             MainActivity.this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, MY_PERMISSIONS_ACCESS_COARSE_LOCATION);
                 } else {
+                    BroadcastReceiver wifiScanReceiver = new BroadcastReceiver() {
+                        @Override
+                        public void onReceive(Context c, Intent intent) {
+                            boolean success = intent.getBooleanExtra(
+                                    WifiManager.EXTRA_RESULTS_UPDATED, false);
+                            if (success) {
+                                for(int i =0; i < 10; i++){
+                                    scanSuccess();
+                                }
+                                System.out.println(resultList);
+                            } else {
+                                // scan failure handling
+                                scanFailure();
+                            }
+                        }
+                    };
+                    IntentFilter intentFilter = new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
+                    getApplicationContext().registerReceiver(wifiScanReceiver, intentFilter);
+
+                    boolean success = wifiManager.startScan();
+                    if (!success) {
+                        scanFailure();
+                    }
                     ArrayList<knn_methods> testKnnObjList = new ArrayList<>();
 
                     testKnnObjList.clear();
+                    //long startTime = System.currentTimeMillis();
 
-                    wifiManager.startScan();
-                    JSONObject js = receiverWifi.getWifiResultList();
-                    ArrayList<knn_methods> tempTestObjList = receiverWifi.getKnn_test_objs() ;
-                    testKnnObjList = arrayAppend(testKnnObjList , tempTestObjList);
-                    resultList.add(js);
+                    /*
+                    while(startTime + 30000 > System.currentTimeMillis()){
+                        ArrayList<knn_methods> tempTestObjList = receiverWifi.getKnn_test_objs() ;
+                        testKnnObjList = arrayAppend(testKnnObjList , tempTestObjList);
 
-                    System.out.println("The sie of the list is: "+testKnnObjList.size());
-                    for(knn_methods e : testKnnObjList){
-                        System.out.println(e.MAC);
-                        System.out.println(e.RSSI);
                     }
+
+                    //testKnnObjList = arrayAppend(testKnnObjList , tempTestObjList);
+
+
                     Toast.makeText(MainActivity.this,"there are test features: "+ testKnnObjList.size(), Toast.LENGTH_SHORT ).show();
                     if(testKnnObjList.size() >0)
                     {
@@ -282,37 +308,43 @@ public class MainActivity extends AppCompatActivity {
                     {
                         Toast.makeText(MainActivity.this,"had 0 test objects", Toast.LENGTH_LONG).show();
                     }
+
+                     */
                 }
             }
         });
 
     } // end of onCreate
 
-    @Override
-    protected void onPostResume() {
-        super.onPostResume();
-        receiverWifi = new WifiReceiver(wifiManager, wifiList);
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
-        registerReceiver(receiverWifi, intentFilter);
 
-        getWifi();
-    }
-    private void getWifi() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            Toast.makeText(MainActivity.this, "version> = marshmallow", Toast.LENGTH_SHORT).show();
-            if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(MainActivity.this, "location turned off", Toast.LENGTH_SHORT).show();
-                ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, MY_PERMISSIONS_ACCESS_COARSE_LOCATION);
-            } else {
-                Toast.makeText(MainActivity.this, "location turned on", Toast.LENGTH_SHORT).show();
-                wifiManager.startScan();
+
+
+    private void scanSuccess() {
+        List<ScanResult> results = wifiManager.getScanResults();
+        for(ScanResult res: results){
+            System.out.println(res.BSSID+": "+res.level);
+            JSONObject feature = new JSONObject();
+            JSONObject output = new JSONObject();
+            try {
+                feature.put("MAC", res.BSSID);
+                feature.put("RSSI", res.level);
+                output.put("attributes", feature);
+                resultList.add(output);
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-        } else {
-            Toast.makeText(MainActivity.this, "scanning", Toast.LENGTH_SHORT).show();
-            wifiManager.startScan();
+
         }
+
     }
+
+    private void scanFailure() {
+        // handle failure: new scan did NOT succeed
+        // consider using old scan results: these are the OLD results!
+        List<ScanResult> results = wifiManager.getScanResults();
+    }
+
+
     public void updateOccupancy(String room_id,@NonNull int plusminus ){
         try {
             String sURL = "https://services3.arcgis.com/jR9a3QtlDyTstZiO/ArcGIS/rest/services/BK_MAP_INDOOR_WFL1/FeatureServer/4/query?where=NAME+like+%27%25"+room_id+"%25%27&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=NAME%2C+OCCUPANCY%2C+OBJECTID&returnGeometry=false&returnCentroid=false&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pjson&token=";
@@ -469,7 +501,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        unregisterReceiver(receiverWifi);
+
     }
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
