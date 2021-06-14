@@ -1,4 +1,4 @@
-package com.example.buildingrhythms;
+package com.dumigil.buildingrhythms;
 
 public class knn_methods {
     public String MAC;

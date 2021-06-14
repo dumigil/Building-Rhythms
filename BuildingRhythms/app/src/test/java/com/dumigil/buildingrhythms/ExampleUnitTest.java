@@ -1,4 +1,4 @@
-package com.example.buildingrhythms;
+package com.dumigil.buildingrhythms;
 
 import org.junit.Test;
 

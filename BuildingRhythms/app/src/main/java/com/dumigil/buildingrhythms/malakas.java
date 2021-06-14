@@ -1,15 +1,15 @@
-package com.example.buildingrhythms;
+package com.dumigil.buildingrhythms;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class indoorModel
+public class malakas
 {
+
+
     public String objectIdFieldName;
     public uniqueIdField_ uniqueIdField;
     public String globalIdFieldName;
     public fields_[] fields;
     public Features[] features;
+
 
     static public class uniqueIdField_
     {
@@ -34,9 +34,14 @@ public class indoorModel
 
     static class Attributes
     {
-        public String NAME;
-        public int OCCUPANCY;
-        public String OBJECTID;
-
+        public String MAC;
+        public String RSSI;
+        public String BSSID;
+        public String Room_ID;
+        public String ObjectId;
+        public String Time_Stamp;
     }
 }
+
+
+

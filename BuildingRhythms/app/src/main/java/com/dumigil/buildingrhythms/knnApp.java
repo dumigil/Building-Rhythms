@@ -1,4 +1,4 @@
-package com.example.buildingrhythms;
+package com.dumigil.buildingrhythms;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -10,7 +10,6 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import com.google.gson.*;
-import com.google.gson.internal.bind.util.ISO8601Utils;
 
 
 // @SuppressWarnings
