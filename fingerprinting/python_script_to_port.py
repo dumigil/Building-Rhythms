@@ -1,16 +1,8 @@
 import pandas as pd
-pd.set_option('display.max_rows', 500)
-pd.set_option('display.max_columns', 50)
-import os
 import numpy as np
-import seaborn as sns
-import matplotlib.pyplot as plt
 from scipy import stats
-import glob
 from sklearn.neighbors import KNeighborsClassifier
-import json
 import  urllib.request, json 
-import time
 
 
 url_path = "https://services3.arcgis.com/jR9a3QtlDyTstZiO/ArcGIS/rest/services/Arduino_Table/FeatureServer/0/query?where=ObjectID%3E%3D0&outFields=MAC%2C+RSSI%2C+BSSID%2C+Room_ID+%2C+ObjectId+%2C+Time_Stamp+&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnDistinctValues=false&cacheHint=false&sqlFormat=none&f=pjson"
