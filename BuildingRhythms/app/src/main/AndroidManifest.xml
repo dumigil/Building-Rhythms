@@ -15,6 +15,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+        android:name="com.chaquo.python.android.PyApplication"
         android:theme="@style/Theme.BuildingRhythms">
 
         <activity android:name="com.dumigil.buildingrhythms.MainActivity">
