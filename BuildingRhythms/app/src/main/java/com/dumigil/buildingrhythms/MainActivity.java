@@ -34,6 +34,7 @@ import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import com.chaquo.python.PyObject;
 import com.chaquo.python.Python;
 import com.chaquo.python.android.AndroidPlatform;
 import com.chaquo.python.android.PyApplication;
@@ -90,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
 
     WifiManager wifiManager;
     private boolean withExtrusion = true;
-    public ArrayList<JSONObject> resultList = new ArrayList<>();
+    public ArrayList<String> resultList = new ArrayList<>();
     private ArrayList<String> arrayList = new ArrayList<>();
     private ArrayAdapter adapter;
 
@@ -111,7 +112,12 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Python.start(new AndroidPlatform(this));
+
+        if (! Python.isStarted()) {
+            Python.start(new AndroidPlatform(this));
+        }
+        Python py = Python.getInstance();
+        PyObject pyobj = py.getModule("python_script_to_port");
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
@@ -234,14 +240,30 @@ public class MainActivity extends AppCompatActivity {
                     };
                     IntentFilter intentFilter = new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
                     getApplicationContext().registerReceiver(wifiScanReceiver, intentFilter);
-
                     boolean success = wifiManager.startScan();
                     if (!success) {
                         scanFailure();
                     }
-                    ArrayList<knn_methods> testKnnObjList = new ArrayList<>();
+                    String input = "[";
+                    String comma = "";
+                    for(String e: resultList){
+                        input += comma;
+                        input += e;
+                        comma = ",\n";
+                    }
+                    input +="]";
+                    System.out.println(input);
+                    if(!input.equals("[]")){
+                        Log.d("PY","Starting python run");
+                        PyObject obj = pyobj.callAttr("predict_func",input);
+                        Log.d("PY","Python run done");
 
-                    testKnnObjList.clear();
+                        System.out.println(obj.toString());
+                    }
+
+                    //ArrayList<knn_methods> testKnnObjList = new ArrayList<>();
+
+                    //testKnnObjList.clear();
                     //long startTime = System.currentTimeMillis();
 
                     /*
@@ -288,14 +310,14 @@ public class MainActivity extends AppCompatActivity {
     private void scanSuccess() {
         List<ScanResult> results = wifiManager.getScanResults();
         for(ScanResult res: results){
-            System.out.println(res.BSSID+": "+res.level);
+            //System.out.println(res.BSSID+": "+res.level);
             JSONObject feature = new JSONObject();
             JSONObject output = new JSONObject();
             try {
                 feature.put("MAC", res.BSSID);
                 feature.put("RSSI", res.level);
                 output.put("attributes", feature);
-                resultList.add(output);
+                resultList.add(output.toString());
             } catch (JSONException e) {
                 e.printStackTrace();
             }

@@ -9,7 +9,7 @@ android {
     buildToolsVersion "30.0.3"
 
     defaultConfig {
-        applicationId "com.example.buildingrhythms"
+        applicationId "com.dumigil.buildingrhythms"
         minSdkVersion 26
         targetSdkVersion 28
         versionCode 1
@@ -23,6 +23,8 @@ android {
                 install "scipy"
                 install "pandas"
                 install "numpy"
+                install "urllib3"
+                install "sklearn"
 
             }
         }
