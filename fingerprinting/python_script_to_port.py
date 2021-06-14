@@ -1,8 +1,9 @@
 #%%
+from joblib.parallel import DEFAULT_MP_CONTEXT
 import pandas as pd
 import numpy as np
 from scipy import stats
-import urllib.request
+import urllib3
 import json 
 from sklearn.neighbors import KNeighborsClassifier
 
@@ -10,16 +11,17 @@ from sklearn.neighbors import KNeighborsClassifier
 def predict_func(test_json_string):
     url_path = "https://services3.arcgis.com/jR9a3QtlDyTstZiO/ArcGIS/rest/services/Arduino_Table/FeatureServer/0/query?where=ObjectID%3E%3D0&outFields=MAC%2C+RSSI%2C+BSSID%2C+Room_ID+%2C+ObjectId+%2C+Time_Stamp+&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnDistinctValues=false&cacheHint=false&sqlFormat=none&f=pjson"
 
-
-    with urllib.request.urlopen(url_path) as url:
-        data = json.loads(url.read().decode())
-
-    df_mega = pd.DataFrame(columns = ['MAC','RSSI','BSSID','Room_ID','ObjectId','Time_Stamp'])
     
-    for attr in data['features']:
-        temp = (attr['attributes'])
-        df_mega=df_mega.append( temp, ignore_index=True)
-    
+    http = urllib3.PoolManager()
+    r = http.request('GET', url_path)
+    data = json.loads(r.data.decode('utf-8'))
+
+    df_mega = pd.DataFrame.from_dict(data['features'])
+    df_mega.loc[:, "MAC"] = df_mega.attributes.apply(lambda x: x["MAC"])
+    df_mega.loc[:, "RSSI"] = df_mega.attributes.apply(lambda x: float(x["RSSI"]))
+    df_mega.loc[:, "Room_ID"] = df_mega.attributes.apply(lambda x: x["Room_ID"])
+    df_mega.drop('attributes', axis=1, inplace=True)
+
     a = df_mega.MAC.unique()
     df_mega['macno'] = df_mega.MAC.apply(lambda x: np.where(a==x)[0][0])
 
@@ -55,14 +57,17 @@ def predict_func(test_json_string):
     x_test.dropna(inplace=True)
     x_test = x_test[['macno','signal']]
     
-    # train kNN model with training data ////////////////
-    knn = KNeighborsClassifier(n_neighbors = 7, weights='distance', algorithm='auto')
-    knn.fit(x_train , y_train)
+    try:
+            
+        # train kNN model with training data ////////////////
+        knn = KNeighborsClassifier(n_neighbors = 7, weights='distance', algorithm='auto')
+        knn.fit(x_train , y_train)
 
-    # predicting using trained model
-    pred = knn.predict(x_test)
-    room =str(stats.mode(pred)[0][0])
+        # predicting using trained model
+        pred = knn.predict(x_test)
+        room =str(stats.mode(pred)[0][0])
 
-    return(room)
-
+        return(room)
+    except:
+        return "Couldn't locate the room you are in :("
 
