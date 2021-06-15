@@ -2,13 +2,13 @@
 from joblib.parallel import DEFAULT_MP_CONTEXT
 import pandas as pd
 import numpy as np
-from scipy import stats
 import urllib3
-import json 
 from sklearn.neighbors import KNeighborsClassifier
+from scipy import stats
+import json 
 
 #%%
-def predict_func(test_json_string):
+def predict_func(test_json_string, current_epoch_time=0):
     url_path = "https://services3.arcgis.com/jR9a3QtlDyTstZiO/ArcGIS/rest/services/Arduino_Table/FeatureServer/0/query?where=ObjectID%3E%3D0&outFields=MAC%2C+RSSI%2C+BSSID%2C+Room_ID+%2C+ObjectId+%2C+Time_Stamp+&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnDistinctValues=false&cacheHint=false&sqlFormat=none&f=pjson"
 
     
@@ -20,14 +20,18 @@ def predict_func(test_json_string):
     df_mega.loc[:, "MAC"] = df_mega.attributes.apply(lambda x: x["MAC"])
     df_mega.loc[:, "RSSI"] = df_mega.attributes.apply(lambda x: float(x["RSSI"]))
     df_mega.loc[:, "Room_ID"] = df_mega.attributes.apply(lambda x: x["Room_ID"])
+    df_mega.loc[:, "Time_Stamp"] = df_mega.attributes.apply(lambda x: float(x["Time_Stamp"]))
     df_mega.drop('attributes', axis=1, inplace=True)
 
+    # filter by time
+    if current_epoch_time!=0:
+        df_mega = df_mega[ df_mega[ 'Time_Stamp' ]> current_epoch_time ]
+
     a = df_mega.MAC.unique()
-    df_mega['macno'] = df_mega.MAC.apply(lambda x: np.where(a==x)[0][0])
+    df_mega['macno'] = df_mega.MAC.apply( lambda x: np.where(a==x)[0][0] )
 
     print(f"Max nof unique identifier is: {max(df_mega.macno)}")
 
-    df_mega=df_mega.astype({'RSSI': 'float32'}, copy=False)
     # ////////////////// DF MEGA is the df of Araduianio Table XD ////////////////////
 
     def indexer(a,x):
