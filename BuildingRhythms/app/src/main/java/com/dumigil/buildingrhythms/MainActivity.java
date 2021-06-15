@@ -189,12 +189,20 @@ public class MainActivity extends AppCompatActivity {
                                         unitLayer.selectFeature((Feature) feature);
                                         Map<String, Object> attr = feature.getAttributes();
                                         Set<String> keys = attr.keySet();
+                                        String room= "";
+                                        String occup = "";
                                         for(String key : keys) {
                                             Object value = attr.get(key);
+
+                                            if(key.equals("Name_Full")){
+                                                room = value.toString();
+                                            }
                                             if(key.equals("OCCUPANCY")){
-                                                Toast.makeText(MainActivity.this, "Occupancy: "+value, Toast.LENGTH_LONG).show();
+                                                occup = value.toString();
                                             }
                                         }
+                                        Toast.makeText(MainActivity.this, "Occupancy of room "+room+": "+occup, Toast.LENGTH_LONG).show();
+
                                     }
                                 }
                             } catch (InterruptedException | ExecutionException e) {
