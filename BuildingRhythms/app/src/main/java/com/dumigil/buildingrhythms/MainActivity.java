@@ -246,51 +246,25 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     System.out.println(input[0]);
+
                     if(!input[0].equals("[]")){
                         Log.d("PY","Starting python run");
                         PyObject obj = pyobj.callAttr("predict_func", input[0]);
                         Log.d("PY","Python run done");
-
-                        System.out.println(obj.toString());
-                    }
-
-                    //ArrayList<knn_methods> testKnnObjList = new ArrayList<>();
-
-                    //testKnnObjList.clear();
-                    //long startTime = System.currentTimeMillis();
-
-                    /*
-                    while(startTime + 30000 > System.currentTimeMillis()){
-                        ArrayList<knn_methods> tempTestObjList = receiverWifi.getKnn_test_objs() ;
-                        testKnnObjList = arrayAppend(testKnnObjList , tempTestObjList);
-
-                    }
-
-                    //testKnnObjList = arrayAppend(testKnnObjList , tempTestObjList);
-
-
-                    Toast.makeText(MainActivity.this,"there are test features: "+ testKnnObjList.size(), Toast.LENGTH_SHORT ).show();
-                    if(testKnnObjList.size() >0)
-                    {
-                        try {
-                            Toast.makeText(MainActivity.this,"You, Human, are in room: " + kNNObj.knn_test_features(testKnnObjList), Toast.LENGTH_SHORT).show();
-                            System.out.println("You, Human, are in room: "+kNNObj.knn_test_features(testKnnObjList));
+                        if(!obj.toString().equals("Couldn't locate the room you are in :(")){
                             previousRoom = currentRoom;
-                            currentRoom = kNNObj.knn_test_features(testKnnObjList);
-                            if (previousRoom != null) {
+                            currentRoom = obj.toString();
+                            Toast.makeText(MainActivity.this,"You, Human, are in room: " + currentRoom, Toast.LENGTH_SHORT).show();
+                            System.out.println("You, Human, are in room: "+currentRoom);
+                            if(previousRoom !=null){
                                 updateOccupancy(previousRoom, -1);
                             }
-                            updateOccupancy(currentRoom, 1);
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                            updateOccupancy(currentRoom,1);
+                        }else{
+                            Toast.makeText(MainActivity.this,"Couldn't locate the room you are in :(", Toast.LENGTH_SHORT).show();
+
                         }
                     }
-                    else
-                    {
-                        Toast.makeText(MainActivity.this,"had 0 test objects", Toast.LENGTH_LONG).show();
-                    }
-
-                     */
                 }
             }
         });
