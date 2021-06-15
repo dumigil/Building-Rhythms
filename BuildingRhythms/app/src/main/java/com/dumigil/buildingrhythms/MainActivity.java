@@ -249,7 +249,9 @@ public class MainActivity extends AppCompatActivity {
 
                     if(!input[0].equals("[]")){
                         Log.d("PY","Starting python run");
-                        PyObject obj = pyobj.callAttr("predict_func", input[0]);
+                        Long tsLong = System.currentTimeMillis()/1000;
+                        String ts = tsLong.toString();
+                        PyObject obj = pyobj.callAttr("predict_func", input[0], ts);
                         Log.d("PY","Python run done");
                         if(!obj.toString().equals("Couldn't locate the room you are in :(")){
                             previousRoom = currentRoom;
