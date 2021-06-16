@@ -19,8 +19,8 @@ def predict_func(test_json_string):
     df_mega = pd.DataFrame.from_dict(data['features'])
     df_mega.loc[:, "MAC"] = df_mega.attributes.apply(lambda x: x["MAC"])
     df_mega.loc[:, "RSSI"] = df_mega.attributes.apply(lambda x: float(x["RSSI"]))
-    df_mega.loc[:, "Room_ID"] = df_mega.attributes.apply(lambda x: x["Room_ID"])
-    df_mega.loc[:, "Room_ID"] = df_mega.attributes.apply(lambda x: x["Room_ID"])
+    df_mega.loc[:, "Table_ID"] = df_mega.attributes.apply(lambda x: x["Table_ID"])
+    # df_mega.loc[:, "Room_ID"] = df_mega.attributes.apply(lambda x: x["Room_ID"])
     df_mega.drop('attributes', axis=1, inplace=True)
 
     a = df_mega.MAC.unique()
