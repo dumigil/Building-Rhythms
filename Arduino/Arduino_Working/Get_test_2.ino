@@ -7,15 +7,15 @@
 
 WiFiSSLClient netSocket;               // network socket to server
 const char server[] PROGMEM = "services3.arcgis.com";  // server name
-const char route[] PROGMEM= "/jR9a3QtlDyTstZiO/ArcGIS/rest/services/Arduino_Table/FeatureServer/0/addFeatures";              // API route
+const char route[] PROGMEM= "/jR9a3QtlDyTstZiO/ArcGIS/rest/services/Arduino_Table_ROOM/FeatureServer/0/addFeatures";              // API route
 
 RTCZero rtc;
 const byte seconds = 0;
-const byte minutes = 52;
-const byte hours = 13;
+const byte minutes = 30;
+const byte hours = 14;
 
 /* Change these values to set the current initial date */
-const byte day = 1;
+const byte day = 16;
 const byte month = 6;
 const byte year = 21;
 
@@ -35,8 +35,8 @@ void setup() {
   rtc.setDate(day, month, year);
   // while you're not connected to a WiFi AP,
   while ( WiFi.status() != WL_CONNECTED) {
-    //Serial.print("Attempting to connect to Network named: ");
-    //Serial.println(SECRET_SSID);
+    Serial.print("Attempting to connect to Network named: ");
+    Serial.println(SECRET_SSID);
 
     //at home
     WiFi.begin(SECRET_SSID, SECRET_PASS);
@@ -53,7 +53,7 @@ void setup() {
 void loop() {
   WiFi.end();
   String dummyData = listNetworks();
-  //Serial.println("Wifi scan complete, starting eduroam timeout");
+  Serial.println("Wifi scan complete, starting eduroam timeout");
   WiFi.end();
   delay(1000);
   while ( WiFi.status() != WL_CONNECTED) {
@@ -90,7 +90,7 @@ void loop() {
 
 String listNetworks() {
   String dataString = "";
-  const char room []PROGMEM= "08.02.00.560";
+  const char room []PROGMEM= "08.02.00.800";
   int numSsid = WiFi.scanNetworks();
   if (numSsid == -1)
   {
@@ -113,7 +113,7 @@ String listNetworks() {
       dataString += comma;
       doc["attributes"]["RSSI"] = WiFi.RSSI(thisNet);
       doc["attributes"]["MAC"] = String(address);
-      doc["attributes"]["Room_ID"] = room;
+      doc["attributes"]["Table_ID"] = room;
       doc["attributes"]["Time_Stamp"] = String(rtc.getEpoch());
       doc["attributes"]["BSSID"] = String(WiFi.SSID(thisNet));
       serializeJson(doc, measurement);

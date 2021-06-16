@@ -132,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
         mSceneView = (SceneView) findViewById(R.id.sceneView);
         mSceneView.setScene(scene);
 
-        ServiceFeatureTable serviceFeatureTableUnits = new ServiceFeatureTable("https://services3.arcgis.com/jR9a3QtlDyTstZiO/arcgis/rest/services/BK_MAP_INDOOR_WFL1/FeatureServer/4");
+        ServiceFeatureTable serviceFeatureTableUnits = new ServiceFeatureTable("https://services3.arcgis.com/jR9a3QtlDyTstZiO/arcgis/rest/services/Map_3D_OOST_700_WFL1/FeatureServer/1");
         serviceFeatureTableUnits.setFeatureRequestMode(ServiceFeatureTable.FeatureRequestMode.ON_INTERACTION_NO_CACHE);
         FeatureLayer unitLayer = new FeatureLayer(serviceFeatureTableUnits);
 
@@ -272,7 +272,7 @@ public class MainActivity extends AppCompatActivity {
                             updateOccupancy(currentRoom,1);
                         }else{
                             Toast.makeText(MainActivity.this,"Couldn't locate the room you are in :(", Toast.LENGTH_SHORT).show();
-
+                            
                         }
                     }
                 }
@@ -323,7 +323,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void updateOccupancy(String room_id,@NonNull int plusminus ){
         try {
-            String sURL = "https://services3.arcgis.com/jR9a3QtlDyTstZiO/ArcGIS/rest/services/BK_MAP_INDOOR_WFL1/FeatureServer/4/query?where=NAME+like+%27%25"+room_id+"%25%27&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=NAME%2C+OCCUPANCY%2C+OBJECTID&returnGeometry=false&returnCentroid=false&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pjson&token=";
+            String sURL = "https://services3.arcgis.com/jR9a3QtlDyTstZiO/arcgis/rest/services/Map_3D_OOST_700_WFL1/FeatureServer/1/query?where=NAME+like+%27%25"+room_id+"%25%27&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=NAME%2C+OCCUPANCY%2C+OBJECTID&returnGeometry=false&returnCentroid=false&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pjson&token=";
             URL url = new URL(sURL);
             HttpURLConnection request = (HttpURLConnection) url.openConnection();
 
@@ -372,7 +372,7 @@ public class MainActivity extends AppCompatActivity {
                 mBody.put("OBJECTID",currOBJECTID);
                 mBody.put("OCCUPANCY", (roomOccupancy+1));
                 postRequest.put("attributes", mBody);
-                String url = "https://services3.arcgis.com/jR9a3QtlDyTstZiO/ArcGIS/rest/services/BK_MAP_INDOOR_WFL1/FeatureServer/4/updateFeatures";
+                String url = "https://services3.arcgis.com/jR9a3QtlDyTstZiO/arcgis/rest/services/Map_3D_OOST_700_WFL1/FeatureServer/1/updateFeatures";
                 RequestQueue requestQueue = Volley.newRequestQueue(this);
                 final String requestBody = "features=["+postRequest.toString()+"]";
                 System.out.println(requestBody);
@@ -425,7 +425,7 @@ public class MainActivity extends AppCompatActivity {
                 mBody.put("OBJECTID",currOBJECTID);
                 mBody.put("OCCUPANCY", (roomOccupancy-1));
                 postRequest.put("attributes", mBody);
-                String url = "https://services3.arcgis.com/jR9a3QtlDyTstZiO/ArcGIS/rest/services/BK_MAP_INDOOR_WFL1/FeatureServer/4/updateFeatures";
+                String url = "https://services3.arcgis.com/jR9a3QtlDyTstZiO/arcgis/rest/services/Map_3D_OOST_700_WFL1/FeatureServer/1/updateFeatures";
                 RequestQueue requestQueue = Volley.newRequestQueue(this);
                 final String requestBody = "features=["+postRequest.toString()+"]";
                 System.out.println(requestBody);
@@ -531,16 +531,16 @@ public class MainActivity extends AppCompatActivity {
 
         // create 5 classes for different population ranges
         ClassBreaksRenderer.ClassBreak classBreak1 = new ClassBreaksRenderer.ClassBreak("-99 to 8560", "-99 to 8560", -1,
-                0, classSymbol1);
+                1, classSymbol1);
         ClassBreaksRenderer.ClassBreak classBreak2 = new ClassBreaksRenderer.ClassBreak("> 8,560 to 18,109", "> 8,560 to 18,109", 1,
                 4, classSymbol2);
         ClassBreaksRenderer.ClassBreak classBreak3 = new ClassBreaksRenderer.ClassBreak("> 18,109 to 35,501", "> 18,109 to 35,501", 4,
-                6, classSymbol3);
-        ClassBreaksRenderer.ClassBreak classBreak4 = new ClassBreaksRenderer.ClassBreak("> 35,501 to 86,100", "> 35,501 to 86,100", 6,
-                8, classSymbol4);
-        ClassBreaksRenderer.ClassBreak classBreak5 = new ClassBreaksRenderer.ClassBreak("> 0.9 to 1", "> 86,100 to 10,110,975", 8,
-                10, classSymbol5);
-        ClassBreaksRenderer.ClassBreak classBreak6 = new ClassBreaksRenderer.ClassBreak("> 0.9 to 1", "> 86,100 to 10,110,975", 10,
+                8, classSymbol3);
+        ClassBreaksRenderer.ClassBreak classBreak4 = new ClassBreaksRenderer.ClassBreak("> 35,501 to 86,100", "> 35,501 to 86,100", 8,
+                12, classSymbol4);
+        ClassBreaksRenderer.ClassBreak classBreak5 = new ClassBreaksRenderer.ClassBreak("> 0.9 to 1", "> 86,100 to 10,110,975", 12,
+                16, classSymbol5);
+        ClassBreaksRenderer.ClassBreak classBreak6 = new ClassBreaksRenderer.ClassBreak("> 0.9 to 1", "> 86,100 to 10,110,975", 16,
                 60, classSymbol5);
         // create the renderer for the POP2007 field
         return new ClassBreaksRenderer("OCCUPANCY", Arrays.asList(classBreak1, classBreak2, classBreak3, classBreak4,
