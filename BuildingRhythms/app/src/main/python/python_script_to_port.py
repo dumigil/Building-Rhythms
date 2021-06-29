@@ -9,8 +9,8 @@ from sklearn.neighbors import KNeighborsClassifier
 
 #%%
 def predict_func(test_json_string, time=0):
-    # url_path = "https://services3.arcgis.com/jR9a3QtlDyTstZiO/ArcGIS/rest/services/Arduino_Table/FeatureServer/0/query?where=ObjectID%3E%3D0&outFields=MAC%2C+RSSI%2C+BSSID%2C+Room_ID+%2C+ObjectId+%2C+Time_Stamp+&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnDistinctValues=false&cacheHint=false&sqlFormat=none&f=pjson"
-    url_path = "https://services3.arcgis.com/jR9a3QtlDyTstZiO/arcgis/rest/services/Arduino_Table_ROOM/FeatureServer/0/query?where=ObjectID%3E%3D0&outFields=MAC%2C+RSSI%2C+BSSID%2C+Table_ID+%2C+ObjectId+%2C+Time_Stamp+&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnDistinctValues=false&cacheHint=false&sqlFormat=none&f=pjson"
+    url_path = "https://services3.arcgis.com/jR9a3QtlDyTstZiO/ArcGIS/rest/services/Arduino_Table/FeatureServer/0/query?where=ObjectID%3E%3D0&outFields=MAC%2C+RSSI%2C+BSSID%2C+Room_ID+%2C+ObjectId+%2C+Time_Stamp+&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnDistinctValues=false&cacheHint=false&sqlFormat=none&f=pjson"
+    #url_path = "https://services3.arcgis.com/jR9a3QtlDyTstZiO/arcgis/rest/services/Arduino_Table_ROOM/FeatureServer/0/query?where=ObjectID%3E%3D0&outFields=MAC%2C+RSSI%2C+BSSID%2C+Table_ID+%2C+ObjectId+%2C+Time_Stamp+&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnDistinctValues=false&cacheHint=false&sqlFormat=none&f=pjson"
     
     http = urllib3.PoolManager()
     r = http.request('GET', url_path)
@@ -19,8 +19,8 @@ def predict_func(test_json_string, time=0):
     df_mega = pd.DataFrame.from_dict(data['features'])
     df_mega.loc[:, "MAC"] = df_mega.attributes.apply(lambda x: x["MAC"])
     df_mega.loc[:, "RSSI"] = df_mega.attributes.apply(lambda x: float(x["RSSI"]))
-    df_mega.loc[:, "Room_ID"] = df_mega.attributes.apply(lambda x: x["Table_ID"])
-    # df_mega.loc[:, "Room_ID"] = df_mega.attributes.apply(lambda x: x["Room_ID"])
+    #df_mega.loc[:, "Room_ID"] = df_mega.attributes.apply(lambda x: x["Table_ID"])
+    df_mega.loc[:, "Room_ID"] = df_mega.attributes.apply(lambda x: x["Room_ID"])
     df_mega.drop('attributes', axis=1, inplace=True)
 
     a = df_mega.MAC.unique()
